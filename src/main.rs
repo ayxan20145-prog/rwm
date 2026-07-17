@@ -1,4 +1,8 @@
-use x11rb::{connect, connection::Connection, protocol::xproto::*};
+use x11rb::{
+    connect,
+    connection::Connection,
+    protocol::{Event, xproto::*},
+};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let (conn, screen_num) = connect(None)?;
@@ -14,8 +18,24 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 | EventMask::KEY_PRESS,
         ),
     )?;
-
     conn.flush()?;
+
+    loop {
+        let event = conn.wait_for_event()?;
+
+        match event {
+            Event::MapRequest(e) => {
+                println!("Map {}", e.window);
+
+                conn.map_window(e.window)?;
+            }
+            Event::DestroyNotify(e) => {
+                println!("Destroyed {}", e.window);
+            }
+
+            _ => {}
+        }
+    }
 
     Ok(())
 }
