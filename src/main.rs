@@ -61,6 +61,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 println!("Map {}", e.window);
 
                 conn.map_window(e.window)?;
+                conn.flush()?;
             }
             Event::DestroyNotify(e) => {
                 println!("Destroyed {}", e.window);
