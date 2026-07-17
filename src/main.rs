@@ -1,3 +1,4 @@
+use std::{process, process::Command};
 use x11rb::{
     connect,
     connection::Connection,
@@ -5,6 +6,7 @@ use x11rb::{
 };
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
+    println!("started");
     let (conn, screen_num) = connect(None)?;
     let screen = &conn.setup().roots[screen_num];
 
@@ -18,6 +20,20 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 | EventMask::KEY_PRESS,
         ),
     )?;
+
+    let keys = [24, 36];
+
+    for key in keys {
+        conn.grab_key(
+            false,
+            screen.root,
+            ModMask::M4,
+            key,
+            GrabMode::ASYNC,
+            GrabMode::ASYNC,
+        )?;
+    }
+
     conn.flush()?;
 
     loop {
@@ -32,10 +48,16 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             Event::DestroyNotify(e) => {
                 println!("Destroyed {}", e.window);
             }
+            Event::KeyPress(e) => {
+                if e.detail == 24 && e.state.contains(KeyButMask::MOD4) {
+                    process::exit(0);
+                } else if e.detail == 36 && e.state.contains(KeyButMask::MOD4) {
+                    Command::new("kitty").spawn().expect("failed");
+                }
+                conn.flush()?;
+            }
 
             _ => {}
         }
     }
-
-    Ok(())
 }
