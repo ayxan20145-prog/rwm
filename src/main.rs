@@ -21,17 +21,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             action: "exit",
         },
         KeyBinding {
-            modifiers: ModMask::M4,
+            modifiers: MOD,
             key: 24, // q
             action: "close",
         },
         KeyBinding {
-            modifiers: ModMask::M4,
+            modifiers: MOD,
             key: 36, // Return
             action: "kitty",
         },
         KeyBinding {
-            modifiers: ModMask::M4,
+            modifiers: MOD,
             key: 40, // d
             action: "dmenu_run",
         },
