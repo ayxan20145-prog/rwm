@@ -11,10 +11,12 @@ struct KeyBinding {
     action: &'static str,
 }
 
+const MOD: ModMask = ModMask::M4; // M4: Super M1: Alt
+
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let bindings = [
         KeyBinding {
-            modifiers: ModMask::M4 | ModMask::SHIFT,
+            modifiers: MOD | ModMask::SHIFT,
             key: 26, // e
             action: "exit",
         },
