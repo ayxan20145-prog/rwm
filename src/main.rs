@@ -6,6 +6,7 @@ use x11rb::{
 };
 
 struct KeyBinding {
+    modifiers: ModMask,
     key: u8,
     action: &'static str,
 }
@@ -13,18 +14,22 @@ struct KeyBinding {
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let bindings = [
         KeyBinding {
+            modifiers: ModMask::M4 | ModMask::SHIFT,
             key: 26, // e
             action: "exit",
         },
         KeyBinding {
+            modifiers: ModMask::M4,
             key: 24, // q
             action: "close",
         },
         KeyBinding {
+            modifiers: ModMask::M4,
             key: 36, // Return
             action: "kitty",
         },
         KeyBinding {
+            modifiers: ModMask::M4,
             key: 40, // d
             action: "dmenu_run",
         },
@@ -48,7 +53,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         conn.grab_key(
             true,
             screen.root,
-            ModMask::M4,
+            binding.modifiers,
             binding.key,
             GrabMode::ASYNC,
             GrabMode::ASYNC,
@@ -71,20 +76,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 println!("Destroyed {}", e.window);
             }
             Event::KeyPress(e) => {
-                if e.state.contains(KeyButMask::MOD4) {
-                    for binding in &bindings {
-                        if e.detail == binding.key {
-                            if binding.action == "exit" {
-                                process::exit(0);
-                            } else if binding.action == "close" {
+                for binding in &bindings {
+                    if e.detail == binding.key && modifiers_match(e.state, binding.modifiers) {
+                        match binding.action {
+                            "exit" => process::exit(0),
+                            "close" => {
                                 let focused = conn.get_input_focus()?.reply()?.focus;
-
                                 conn.kill_client(focused)?;
                                 conn.flush()?;
-                            } else {
-                                Command::new(binding.action)
-                                    .spawn()
-                                    .expect("Failed to execute command");
+                            }
+                            cmd => {
+                                Command::new(cmd).spawn()?;
                             }
                         }
                     }
@@ -95,4 +97,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             _ => {}
         }
     }
+}
+fn modifiers_match(event: KeyButMask, binding: ModMask) -> bool {
+    event.contains(KeyButMask::MOD4) == binding.contains(ModMask::M4)
+        && event.contains(KeyButMask::SHIFT) == binding.contains(ModMask::SHIFT)
+        && event.contains(KeyButMask::CONTROL) == binding.contains(ModMask::CONTROL)
+        && event.contains(KeyButMask::MOD1) == binding.contains(ModMask::M1)
 }
