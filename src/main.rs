@@ -5,8 +5,23 @@ use x11rb::{
     protocol::{Event, xproto::*},
 };
 
+struct KeyBinding {
+    key: u8,
+    action: &'static str,
+}
+
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    println!("started");
+    let bindings = [
+        KeyBinding {
+            key: 24, // q
+            action: "exit",
+        },
+        KeyBinding {
+            key: 36, // Return
+            action: "kitty",
+        },
+    ];
+
     let (conn, screen_num) = connect(None)?;
     let screen = &conn.setup().roots[screen_num];
 
@@ -21,14 +36,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         ),
     )?;
 
-    let keys = [24, 36];
-
-    for key in keys {
+    for binding in &bindings {
         conn.grab_key(
-            false,
+            true,
             screen.root,
             ModMask::M4,
-            key,
+            binding.key,
             GrabMode::ASYNC,
             GrabMode::ASYNC,
         )?;
@@ -49,10 +62,18 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 println!("Destroyed {}", e.window);
             }
             Event::KeyPress(e) => {
-                if e.detail == 24 && e.state.contains(KeyButMask::MOD4) {
-                    process::exit(0);
-                } else if e.detail == 36 && e.state.contains(KeyButMask::MOD4) {
-                    Command::new("kitty").spawn().expect("failed");
+                if e.state.contains(KeyButMask::MOD4) {
+                    for binding in &bindings {
+                        if e.detail == binding.key {
+                            if binding.action == "exit" {
+                                process::exit(0);
+                            } else {
+                                Command::new(binding.action)
+                                    .spawn()
+                                    .expect("Failed to execute command");
+                            }
+                        }
+                    }
                 }
                 conn.flush()?;
             }
