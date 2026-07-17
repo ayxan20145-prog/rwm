@@ -20,6 +20,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             key: 36, // Return
             action: "kitty",
         },
+        KeyBinding {
+            key: 40, // d
+            action: "dmenu_run",
+        },
     ];
 
     let (conn, screen_num) = connect(None)?;
