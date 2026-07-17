@@ -13,8 +13,12 @@ struct KeyBinding {
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let bindings = [
         KeyBinding {
-            key: 24, // q
+            key: 26, // e
             action: "exit",
+        },
+        KeyBinding {
+            key: 24, // q
+            action: "close",
         },
         KeyBinding {
             key: 36, // Return
@@ -72,6 +76,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                         if e.detail == binding.key {
                             if binding.action == "exit" {
                                 process::exit(0);
+                            } else if binding.action == "close" {
+                                let focused = conn.get_input_focus()?.reply()?.focus;
+
+                                conn.kill_client(focused)?;
+                                conn.flush()?;
                             } else {
                                 Command::new(binding.action)
                                     .spawn()
