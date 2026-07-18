@@ -98,6 +98,50 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
                                     move_window(&conn, window, geom.x as i32 + 20, geom.y as i32)?;
                                 }
                             }
+                            "increase width" => {
+                                if let Some(window) = focused {
+                                    let geom = conn.get_geometry(window)?.reply()?;
+                                    resize_window(
+                                        &conn,
+                                        window,
+                                        geom.width as u32 + 20,
+                                        geom.height as u32,
+                                    )?;
+                                }
+                            }
+                            "decrease width" => {
+                                if let Some(window) = focused {
+                                    let geom = conn.get_geometry(window)?.reply()?;
+                                    resize_window(
+                                        &conn,
+                                        window,
+                                        geom.width as u32 - 20,
+                                        geom.height as u32,
+                                    )?;
+                                }
+                            }
+                            "increase height" => {
+                                if let Some(window) = focused {
+                                    let geom = conn.get_geometry(window)?.reply()?;
+                                    resize_window(
+                                        &conn,
+                                        window,
+                                        geom.width as u32,
+                                        geom.height as u32 + 20,
+                                    )?;
+                                }
+                            }
+                            "decrease height" => {
+                                if let Some(window) = focused {
+                                    let geom = conn.get_geometry(window)?.reply()?;
+                                    resize_window(
+                                        &conn,
+                                        window,
+                                        geom.width as u32,
+                                        geom.height as u32 - 20,
+                                    )?;
+                                }
+                            }
                             cmd => {
                                 Command::new(cmd).spawn()?;
                             }
@@ -124,6 +168,18 @@ fn move_window<C: Connection>(
     y: i32,
 ) -> Result<(), Box<dyn std::error::Error>> {
     conn.configure_window(window, &ConfigureWindowAux::new().x(x).y(y))?;
+
+    conn.flush()?;
+    Ok(())
+}
+fn resize_window<C: Connection>(
+    conn: &C,
+    window: Window,
+    width: u32,
+    height: u32,
+) -> Result<(), Box<dyn std::error::Error>> {
+    let values = ConfigureWindowAux::new().width(width).height(height);
+    conn.configure_window(window, &values)?;
 
     conn.flush()?;
     Ok(())

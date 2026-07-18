@@ -68,6 +68,26 @@ pub fn bindings() -> Vec<KeyBinding> {
         },
         KeyBinding {
             modifiers: MOD,
+            key: 21, // =
+            action: "increase width",
+        },
+        KeyBinding {
+            modifiers: MOD,
+            key: 20, // -
+            action: "decrease width",
+        },
+        KeyBinding {
+            modifiers: MOD | ModMask::SHIFT,
+            key: 21, // +
+            action: "increase height",
+        },
+        KeyBinding {
+            modifiers: MOD | ModMask::SHIFT,
+            key: 20, // _
+            action: "decrease height",
+        },
+        KeyBinding {
+            modifiers: MOD,
             key: 36, // Return
             action: "kitty",
         },
