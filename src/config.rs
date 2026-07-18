@@ -88,6 +88,11 @@ pub fn bindings() -> Vec<KeyBinding> {
         },
         KeyBinding {
             modifiers: MOD,
+            key: 41, // f
+            action: "fullscreen",
+        },
+        KeyBinding {
+            modifiers: MOD,
             key: 36, // Return
             action: "kitty",
         },

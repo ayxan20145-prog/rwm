@@ -142,6 +142,11 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
                                     )?;
                                 }
                             }
+                            "fullscreen" => {
+                                if let Some(window) = focused {
+                                    fullscreen(&conn, window, screen)?;
+                                }
+                            }
                             cmd => {
                                 Command::new(cmd).spawn()?;
                             }
@@ -179,6 +184,21 @@ fn resize_window<C: Connection>(
     height: u32,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let values = ConfigureWindowAux::new().width(width).height(height);
+    conn.configure_window(window, &values)?;
+
+    conn.flush()?;
+    Ok(())
+}
+fn fullscreen<C: Connection>(
+    conn: &C,
+    window: Window,
+    screen: &Screen,
+) -> Result<(), Box<dyn std::error::Error>> {
+    let values = ConfigureWindowAux::new()
+        .x(0)
+        .y(0)
+        .width(screen.width_in_pixels as u32)
+        .height(screen.height_in_pixels as u32);
     conn.configure_window(window, &values)?;
 
     conn.flush()?;
