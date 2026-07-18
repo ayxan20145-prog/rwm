@@ -11,9 +11,14 @@ struct KeyBinding {
     action: &'static str,
 }
 
-const MOD: ModMask = ModMask::M4; // M4: Super M1: Alt
+const MOD: ModMask = ModMask::M4;
+/* Choose your modkey
+   M4: Super
+   M1: Alt
+*/
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
+    // You can check the keycode in xev
     let bindings = [
         KeyBinding {
             modifiers: MOD | ModMask::SHIFT,
@@ -24,6 +29,46 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             modifiers: MOD,
             key: 24, // q
             action: "close",
+        },
+        KeyBinding {
+            modifiers: MOD | ModMask::CONTROL,
+            key: 43, // h
+            action: "move left",
+        },
+        KeyBinding {
+            modifiers: MOD | ModMask::CONTROL,
+            key: 44, // j
+            action: "move down",
+        },
+        KeyBinding {
+            modifiers: MOD | ModMask::CONTROL,
+            key: 45, // k
+            action: "move up",
+        },
+        KeyBinding {
+            modifiers: MOD | ModMask::CONTROL,
+            key: 46, // l
+            action: "move right",
+        },
+        KeyBinding {
+            modifiers: MOD | ModMask::CONTROL,
+            key: 113, // left
+            action: "move left",
+        },
+        KeyBinding {
+            modifiers: MOD | ModMask::CONTROL,
+            key: 116, // down
+            action: "move down",
+        },
+        KeyBinding {
+            modifiers: MOD | ModMask::CONTROL,
+            key: 111, // up
+            action: "move up",
+        },
+        KeyBinding {
+            modifiers: MOD | ModMask::CONTROL,
+            key: 114, // right
+            action: "move right",
         },
         KeyBinding {
             modifiers: MOD,
@@ -87,6 +132,26 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                                 conn.kill_client(focused)?;
                                 conn.flush()?;
                             }
+                            "move left" => {
+                                let window = conn.get_input_focus()?.reply()?.focus;
+                                let geom = conn.get_geometry(window)?.reply()?;
+                                move_window(&conn, window, geom.x as i32 - 20, geom.y as i32)?;
+                            }
+                            "move down" => {
+                                let window = conn.get_input_focus()?.reply()?.focus;
+                                let geom = conn.get_geometry(window)?.reply()?;
+                                move_window(&conn, window, geom.x as i32, geom.y as i32 + 20)?;
+                            }
+                            "move up" => {
+                                let window = conn.get_input_focus()?.reply()?.focus;
+                                let geom = conn.get_geometry(window)?.reply()?;
+                                move_window(&conn, window, geom.x as i32, geom.y as i32 - 20)?;
+                            }
+                            "move right" => {
+                                let window = conn.get_input_focus()?.reply()?.focus;
+                                let geom = conn.get_geometry(window)?.reply()?;
+                                move_window(&conn, window, geom.x as i32 + 20, geom.y as i32)?;
+                            }
                             cmd => {
                                 Command::new(cmd).spawn()?;
                             }
@@ -105,4 +170,15 @@ fn modifiers_match(event: KeyButMask, binding: ModMask) -> bool {
         && event.contains(KeyButMask::SHIFT) == binding.contains(ModMask::SHIFT)
         && event.contains(KeyButMask::CONTROL) == binding.contains(ModMask::CONTROL)
         && event.contains(KeyButMask::MOD1) == binding.contains(ModMask::M1)
+}
+fn move_window<C: Connection>(
+    conn: &C,
+    window: Window,
+    x: i32,
+    y: i32,
+) -> Result<(), Box<dyn std::error::Error>> {
+    conn.configure_window(window, &ConfigureWindowAux::new().x(x).y(y))?;
+
+    conn.flush()?;
+    Ok(())
 }
