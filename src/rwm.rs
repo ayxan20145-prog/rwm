@@ -6,6 +6,10 @@ use x11rb::{
     protocol::{Event, xproto::*},
 };
 
+struct Workspace {
+    windows: Vec<Window>,
+}
+
 pub fn run() -> Result<(), Box<dyn std::error::Error>> {
     let bindings = bindings();
 
@@ -37,29 +41,47 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
 
     conn.flush()?;
 
-    let mut windows: Vec<Window> = Vec::new();
     let mut focused: Option<Window> = None;
+
+    let mut workspaces = vec![
+        Workspace {
+            windows: Vec::new(),
+        },
+        Workspace {
+            windows: Vec::new(),
+        },
+        Workspace {
+            windows: Vec::new(),
+        },
+        Workspace {
+            windows: Vec::new(),
+        },
+    ];
+
+    let mut current = 0;
 
     loop {
         let event = conn.wait_for_event()?;
 
         match event {
             Event::MapRequest(e) => {
-                windows.push(e.window);
+                workspaces[current].windows.push(e.window);
                 focused = Some(e.window);
 
                 conn.map_window(e.window)?;
                 conn.flush()?;
             }
             Event::DestroyNotify(e) => {
-                windows.retain(|&w| w != e.window);
+                for workspace in &mut workspaces {
+                    workspace.windows.retain(|&w| w != e.window);
+                }
 
                 if focused == Some(e.window) {
-                    focused = windows.last().copied();
+                    focused = workspaces[current].windows.last().copied();
                 }
             }
             Event::FocusIn(e) => {
-                if windows.contains(&e.event) {
+                if workspaces[current].windows.contains(&e.event) {
                     focused = Some(e.event);
                 }
             }
@@ -147,6 +169,42 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
                                     fullscreen(&conn, window, screen)?;
                                 }
                             }
+                            "workspace 1" => {
+                                switch_workspace(
+                                    &conn,
+                                    &mut workspaces,
+                                    &mut current,
+                                    0,
+                                    &mut focused,
+                                )?;
+                            }
+                            "workspace 2" => {
+                                switch_workspace(
+                                    &conn,
+                                    &mut workspaces,
+                                    &mut current,
+                                    1,
+                                    &mut focused,
+                                )?;
+                            }
+                            "workspace 3" => {
+                                switch_workspace(
+                                    &conn,
+                                    &mut workspaces,
+                                    &mut current,
+                                    2,
+                                    &mut focused,
+                                )?;
+                            }
+                            "workspace 4" => {
+                                switch_workspace(
+                                    &conn,
+                                    &mut workspaces,
+                                    &mut current,
+                                    3,
+                                    &mut focused,
+                                )?;
+                            }
                             cmd => {
                                 Command::new(cmd).spawn()?;
                             }
@@ -200,6 +258,32 @@ fn fullscreen<C: Connection>(
         .width(screen.width_in_pixels as u32)
         .height(screen.height_in_pixels as u32);
     conn.configure_window(window, &values)?;
+
+    conn.flush()?;
+    Ok(())
+}
+fn switch_workspace<C: Connection>(
+    conn: &C,
+    workspaces: &mut [Workspace],
+    current: &mut usize,
+    new: usize,
+    focused: &mut Option<Window>,
+) -> Result<(), Box<dyn std::error::Error>> {
+    if *current == new {
+        return Ok(());
+    }
+
+    for &window in &workspaces[*current].windows {
+        conn.unmap_window(window)?;
+    }
+
+    *current = new;
+
+    for &window in &workspaces[*current].windows {
+        conn.map_window(window)?;
+    }
+
+    *focused = workspaces[*current].windows.last().copied();
 
     conn.flush()?;
     Ok(())

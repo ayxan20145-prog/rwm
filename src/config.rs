@@ -26,6 +26,7 @@ pub fn bindings() -> Vec<KeyBinding> {
             key: 24, // q
             action: "close",
         },
+        // Moving windows
         KeyBinding {
             modifiers: MOD | ModMask::CONTROL,
             key: 43, // h
@@ -66,6 +67,7 @@ pub fn bindings() -> Vec<KeyBinding> {
             key: 114, // right
             action: "move right",
         },
+        // Resizing windows
         KeyBinding {
             modifiers: MOD,
             key: 21, // =
@@ -91,6 +93,28 @@ pub fn bindings() -> Vec<KeyBinding> {
             key: 41, // f
             action: "fullscreen",
         },
+        // Workspaces
+        KeyBinding {
+            modifiers: MOD,
+            key: 10, // 1
+            action: "workspace 1",
+        },
+        KeyBinding {
+            modifiers: MOD,
+            key: 11, // 2
+            action: "workspace 2",
+        },
+        KeyBinding {
+            modifiers: MOD,
+            key: 12, // 3
+            action: "workspace 3",
+        },
+        KeyBinding {
+            modifiers: MOD,
+            key: 13, // 4
+            action: "workspace 4",
+        },
+        // Other
         KeyBinding {
             modifiers: MOD,
             key: 36, // Return
