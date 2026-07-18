@@ -56,6 +56,21 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
         Workspace {
             windows: Vec::new(),
         },
+        Workspace {
+            windows: Vec::new(),
+        },
+        Workspace {
+            windows: Vec::new(),
+        },
+        Workspace {
+            windows: Vec::new(),
+        },
+        Workspace {
+            windows: Vec::new(),
+        },
+        Workspace {
+            windows: Vec::new(),
+        },
     ];
 
     let mut current = 0;
@@ -205,6 +220,96 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
                                     &mut focused,
                                 )?;
                             }
+                            "workspace 5" => {
+                                switch_workspace(
+                                    &conn,
+                                    &mut workspaces,
+                                    &mut current,
+                                    4,
+                                    &mut focused,
+                                )?;
+                            }
+                            "workspace 6" => {
+                                switch_workspace(
+                                    &conn,
+                                    &mut workspaces,
+                                    &mut current,
+                                    5,
+                                    &mut focused,
+                                )?;
+                            }
+                            "workspace 7" => {
+                                switch_workspace(
+                                    &conn,
+                                    &mut workspaces,
+                                    &mut current,
+                                    6,
+                                    &mut focused,
+                                )?;
+                            }
+                            "workspace 8" => {
+                                switch_workspace(
+                                    &conn,
+                                    &mut workspaces,
+                                    &mut current,
+                                    7,
+                                    &mut focused,
+                                )?;
+                            }
+                            "workspace 9" => {
+                                switch_workspace(
+                                    &conn,
+                                    &mut workspaces,
+                                    &mut current,
+                                    8,
+                                    &mut focused,
+                                )?;
+                            }
+                            "move to workspace 1" => {
+                                if let Some(window) = focused {
+                                    move_to_workspace(&conn, &mut workspaces, current, 0, window)?;
+                                }
+                            }
+                            "move to workspace 2" => {
+                                if let Some(window) = focused {
+                                    move_to_workspace(&conn, &mut workspaces, current, 1, window)?;
+                                }
+                            }
+                            "move to workspace 3" => {
+                                if let Some(window) = focused {
+                                    move_to_workspace(&conn, &mut workspaces, current, 2, window)?;
+                                }
+                            }
+                            "move to workspace 4" => {
+                                if let Some(window) = focused {
+                                    move_to_workspace(&conn, &mut workspaces, current, 3, window)?;
+                                }
+                            }
+                            "move to workspace 5" => {
+                                if let Some(window) = focused {
+                                    move_to_workspace(&conn, &mut workspaces, current, 4, window)?;
+                                }
+                            }
+                            "move to workspace 6" => {
+                                if let Some(window) = focused {
+                                    move_to_workspace(&conn, &mut workspaces, current, 5, window)?;
+                                }
+                            }
+                            "move to workspace 7" => {
+                                if let Some(window) = focused {
+                                    move_to_workspace(&conn, &mut workspaces, current, 6, window)?;
+                                }
+                            }
+                            "move to workspace 8" => {
+                                if let Some(window) = focused {
+                                    move_to_workspace(&conn, &mut workspaces, current, 7, window)?;
+                                }
+                            }
+                            "move to workspace 9" => {
+                                if let Some(window) = focused {
+                                    move_to_workspace(&conn, &mut workspaces, current, 8, window)?;
+                                }
+                            }
                             cmd => {
                                 Command::new(cmd).spawn()?;
                             }
@@ -284,6 +389,23 @@ fn switch_workspace<C: Connection>(
     }
 
     *focused = workspaces[*current].windows.last().copied();
+
+    conn.flush()?;
+    Ok(())
+}
+fn move_to_workspace<C: Connection>(
+    conn: &C,
+    workspaces: &mut [Workspace],
+    current: usize,
+    target: usize,
+    window: Window,
+) -> Result<(), Box<dyn std::error::Error>> {
+    workspaces[current].windows.retain(|&w| w != window);
+    workspaces[target].windows.push(window);
+
+    if current != target {
+        conn.unmap_window(window)?;
+    }
 
     conn.flush()?;
     Ok(())
