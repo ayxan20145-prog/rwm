@@ -1,4 +1,4 @@
-use crate::config::bindings;
+use crate::{bar, config::bindings};
 use std::{process, process::Command};
 use x11rb::{
     connect,
@@ -40,6 +40,8 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     conn.flush()?;
+
+    let bar = bar::create_bar(&conn, screen)?;
 
     let mut focused: Option<Window> = None;
 
@@ -321,6 +323,8 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
 
             _ => {}
         }
+        bar::draw(&conn, &bar, current)?;
+        conn.flush()?;
     }
 }
 fn modifiers_match(event: KeyButMask, binding: ModMask) -> bool {
