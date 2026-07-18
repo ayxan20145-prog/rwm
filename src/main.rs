@@ -92,7 +92,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 | EventMask::SUBSTRUCTURE_NOTIFY
                 | EventMask::BUTTON_PRESS
                 | EventMask::POINTER_MOTION
-                | EventMask::KEY_PRESS,
+                | EventMask::KEY_PRESS
+                | EventMask::FOCUS_CHANGE,
         ),
     )?;
 
@@ -109,18 +110,31 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     conn.flush()?;
 
+    let mut windows: Vec<Window> = Vec::new();
+    let mut focused: Option<Window> = None;
+
     loop {
         let event = conn.wait_for_event()?;
 
         match event {
             Event::MapRequest(e) => {
-                println!("Map {}", e.window);
+                windows.push(e.window);
+                focused = Some(e.window);
 
                 conn.map_window(e.window)?;
                 conn.flush()?;
             }
             Event::DestroyNotify(e) => {
-                println!("Destroyed {}", e.window);
+                windows.retain(|&w| w != e.window);
+
+                if focused == Some(e.window) {
+                    focused = windows.last().copied();
+                }
+            }
+            Event::FocusIn(e) => {
+                if windows.contains(&e.event) {
+                    focused = Some(e.event);
+                }
             }
             Event::KeyPress(e) => {
                 for binding in &bindings {
@@ -128,29 +142,34 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                         match binding.action {
                             "exit" => process::exit(0),
                             "close" => {
-                                let focused = conn.get_input_focus()?.reply()?.focus;
-                                conn.kill_client(focused)?;
-                                conn.flush()?;
+                                if let Some(window) = focused {
+                                    conn.kill_client(window)?;
+                                    conn.flush()?;
+                                }
                             }
                             "move left" => {
-                                let window = conn.get_input_focus()?.reply()?.focus;
-                                let geom = conn.get_geometry(window)?.reply()?;
-                                move_window(&conn, window, geom.x as i32 - 20, geom.y as i32)?;
+                                if let Some(window) = focused {
+                                    let geom = conn.get_geometry(window)?.reply()?;
+                                    move_window(&conn, window, geom.x as i32 - 20, geom.y as i32)?;
+                                }
                             }
                             "move down" => {
-                                let window = conn.get_input_focus()?.reply()?.focus;
-                                let geom = conn.get_geometry(window)?.reply()?;
-                                move_window(&conn, window, geom.x as i32, geom.y as i32 + 20)?;
+                                if let Some(window) = focused {
+                                    let geom = conn.get_geometry(window)?.reply()?;
+                                    move_window(&conn, window, geom.x as i32, geom.y as i32 + 20)?;
+                                }
                             }
                             "move up" => {
-                                let window = conn.get_input_focus()?.reply()?.focus;
-                                let geom = conn.get_geometry(window)?.reply()?;
-                                move_window(&conn, window, geom.x as i32, geom.y as i32 - 20)?;
+                                if let Some(window) = focused {
+                                    let geom = conn.get_geometry(window)?.reply()?;
+                                    move_window(&conn, window, geom.x as i32, geom.y as i32 - 20)?;
+                                }
                             }
                             "move right" => {
-                                let window = conn.get_input_focus()?.reply()?.focus;
-                                let geom = conn.get_geometry(window)?.reply()?;
-                                move_window(&conn, window, geom.x as i32 + 20, geom.y as i32)?;
+                                if let Some(window) = focused {
+                                    let geom = conn.get_geometry(window)?.reply()?;
+                                    move_window(&conn, window, geom.x as i32 + 20, geom.y as i32)?;
+                                }
                             }
                             cmd => {
                                 Command::new(cmd).spawn()?;
