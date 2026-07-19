@@ -1,32 +1,44 @@
 use x11rb::protocol::xproto::ModMask;
 
 pub struct KeyBinding {
+    // Modifier keys (Super, Alt, Ctrl, Shift, etc.)
     pub modifiers: ModMask,
+
+    // X11 Keycode (you can find it with xev)
     pub key: u8,
+
+    // Action that the WM will execute
     pub action: &'static str,
 }
 
+// Choose your modifier key for the WM
+//  M4: Super/Windows
+//  M1: Alt
 const MOD: ModMask = ModMask::M4;
-/*
-Choose your modkey
-   M4: Super
-   M1: Alt
-*/
 
 pub fn bindings() -> Vec<KeyBinding> {
-    // You can check the keycode in xev
     vec![
+        // =========================
+        // Window manager controls
+        // =========================
+
+        // Exit the WM
         KeyBinding {
             modifiers: MOD | ModMask::SHIFT,
             key: 26, // e
             action: "exit",
         },
+        // Close the focused window
         KeyBinding {
             modifiers: MOD,
             key: 24, // q
             action: "close",
         },
+        // =========================
         // Moving windows
+        // =========================
+
+        // Vim style movement (h/j/k/l)
         KeyBinding {
             modifiers: MOD | ModMask::CONTROL,
             key: 43, // h
@@ -47,6 +59,7 @@ pub fn bindings() -> Vec<KeyBinding> {
             key: 46, // l
             action: "move right",
         },
+        // Arrow key movement
         KeyBinding {
             modifiers: MOD | ModMask::CONTROL,
             key: 113, // left
@@ -67,7 +80,11 @@ pub fn bindings() -> Vec<KeyBinding> {
             key: 114, // right
             action: "move right",
         },
-        // Resizing windows
+        // =========================
+        // Window resizing
+        // =========================
+
+        // Change window width
         KeyBinding {
             modifiers: MOD,
             key: 21, // =
@@ -78,6 +95,7 @@ pub fn bindings() -> Vec<KeyBinding> {
             key: 20, // -
             action: "decrease width",
         },
+        // Change window height
         KeyBinding {
             modifiers: MOD | ModMask::SHIFT,
             key: 21, // +
@@ -88,12 +106,17 @@ pub fn bindings() -> Vec<KeyBinding> {
             key: 20, // _
             action: "decrease height",
         },
+        // Toggle full screen mode
         KeyBinding {
             modifiers: MOD,
             key: 41, // f
             action: "fullscreen",
         },
+        // =========================
         // Workspaces
+        // =========================
+
+        // Switch workspace 1-9
         KeyBinding {
             modifiers: MOD,
             key: 10, // 1
@@ -139,6 +162,7 @@ pub fn bindings() -> Vec<KeyBinding> {
             key: 18, // 9
             action: "workspace 9",
         },
+        // Move current window to workspace 1-9
         KeyBinding {
             modifiers: MOD | ModMask::SHIFT,
             key: 10, // 1
@@ -184,12 +208,17 @@ pub fn bindings() -> Vec<KeyBinding> {
             key: 18, // 9
             action: "move to workspace 9",
         },
-        // Other
+        // =========================
+        // Applications
+        // =========================
+
+        // Open terminal
         KeyBinding {
             modifiers: MOD,
             key: 36, // Return
             action: "kitty",
         },
+        // Open application launcher
         KeyBinding {
             modifiers: MOD,
             key: 40, // d
