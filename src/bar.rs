@@ -1,3 +1,4 @@
+use chrono::Local;
 use x11rb::{COPY_FROM_PARENT, connection::Connection, protocol::xproto::*};
 
 pub struct Bar {
@@ -44,6 +45,7 @@ pub fn draw<C: Connection>(
     conn: &C,
     bar: &Bar,
     current: usize,
+    screen: &Screen,
 ) -> Result<(), Box<dyn std::error::Error>> {
     conn.clear_area(false, bar.window, 0, 0, 0, 0)?;
 
@@ -57,7 +59,14 @@ pub fn draw<C: Connection>(
         }
     }
 
+    let clock = format!("{}", Local::now().format("%Y-%m-%d %H:%M:%S"));
+
+    let char_width = 6;
+
+    let x = screen.width_in_pixels as i16 - (clock.len() as i16 * char_width) - 10;
+
     conn.image_text8(bar.window, bar.gc, 10, 16, text.as_bytes())?;
+    conn.image_text8(bar.window, bar.gc, x, 16, clock.as_bytes())?;
 
     Ok(())
 }

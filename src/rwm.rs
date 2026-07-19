@@ -323,7 +323,7 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
 
             _ => {}
         }
-        bar::draw(&conn, &bar, current)?;
+        bar::draw(&conn, &bar, current, &screen)?;
         conn.flush()?;
     }
 }
