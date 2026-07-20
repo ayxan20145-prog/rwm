@@ -16,6 +16,12 @@ pub struct KeyBinding {
 //  M1: Alt
 const MOD: ModMask = ModMask::M4;
 
+// Choose your terminal emulator
+const TERM: &'static str = "kitty";
+
+// Choose your application launcher
+const LAUNCHER: &'static str = "dmenu_run";
+
 pub fn bindings() -> Vec<KeyBinding> {
     vec![
         // =========================
@@ -242,13 +248,13 @@ pub fn bindings() -> Vec<KeyBinding> {
         KeyBinding {
             modifiers: MOD,
             key: 36, // Return
-            action: "kitty",
+            action: TERM,
         },
         // Open application launcher
         KeyBinding {
             modifiers: MOD,
             key: 40, // d
-            action: "dmenu_run",
+            action: LAUNCHER,
         },
     ]
 }
