@@ -25,6 +25,20 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
     let (conn, screen_num) = connect(None)?;
     let screen = &conn.setup().roots[screen_num];
 
+    let font = conn.generate_id()?;
+    conn.open_font(font, b"cursor")?;
+
+    let cursor = conn.generate_id()?;
+    conn.create_glyph_cursor(cursor, font, font, 68, 69, 0, 0, 0, 0xffff, 0xffff, 0xffff)?;
+
+    conn.change_window_attributes(
+        screen.root,
+        &ChangeWindowAttributesAux::new().cursor(cursor),
+    )?;
+
+    conn.close_font(font)?;
+    conn.flush()?;
+
     conn.change_window_attributes(
         screen.root,
         &ChangeWindowAttributesAux::new().event_mask(
