@@ -209,6 +209,32 @@ pub fn bindings() -> Vec<KeyBinding> {
             action: "move to workspace 9",
         },
         // =========================
+        // Focus
+        // =========================
+
+        // Vim style movement (h/j/k/l)
+        KeyBinding {
+            modifiers: MOD,
+            key: 43, // h
+            action: "focus left",
+        },
+        KeyBinding {
+            modifiers: MOD,
+            key: 46, // l
+            action: "focus right",
+        },
+        // Arrow key movement
+        KeyBinding {
+            modifiers: MOD,
+            key: 113, // left
+            action: "focus left",
+        },
+        KeyBinding {
+            modifiers: MOD,
+            key: 114, // right
+            action: "focus right",
+        },
+        // =========================
         // Applications
         // =========================
 

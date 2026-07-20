@@ -97,6 +97,7 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
                 focused = Some(e.window);
 
                 conn.map_window(e.window)?;
+                conn.set_input_focus(InputFocus::POINTER_ROOT, e.window, x11rb::CURRENT_TIME)?;
                 conn.flush()?;
             }
             Event::DestroyNotify(e) => {
@@ -323,6 +324,12 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
                                     move_to_workspace(&conn, &mut workspaces, current, 8, window)?;
                                 }
                             }
+                            "focus left" => {
+                                focus_prev(&conn, &workspaces[current], &mut focused)?;
+                            }
+                            "focus right" => {
+                                focus_next(&conn, &workspaces[current], &mut focused)?;
+                            }
                             cmd => {
                                 Command::new(cmd).spawn()?;
                             }
@@ -463,5 +470,70 @@ fn move_to_workspace<C: Connection>(
     }
 
     conn.flush()?;
+    Ok(())
+}
+fn focus_next<C: Connection>(
+    conn: &C,
+    workspace: &Workspace,
+    focused: &mut Option<Window>,
+) -> Result<(), Box<dyn std::error::Error>> {
+    if workspace.windows.is_empty() {
+        return Ok(());
+    }
+
+    let current = workspace
+        .windows
+        .iter()
+        .position(|&w| Some(w) == *focused)
+        .unwrap_or(0);
+
+    let next = (current + 1) % workspace.windows.len();
+    let window = workspace.windows[next];
+
+    conn.set_input_focus(InputFocus::POINTER_ROOT, window, x11rb::CURRENT_TIME)?;
+
+    conn.configure_window(
+        window,
+        &ConfigureWindowAux::new().stack_mode(StackMode::ABOVE),
+    )?;
+
+    *focused = Some(window);
+    conn.flush()?;
+
+    Ok(())
+}
+fn focus_prev<C: Connection>(
+    conn: &C,
+    workspace: &Workspace,
+    focused: &mut Option<Window>,
+) -> Result<(), Box<dyn std::error::Error>> {
+    if workspace.windows.is_empty() {
+        return Ok(());
+    }
+
+    let current = workspace
+        .windows
+        .iter()
+        .position(|&w| Some(w) == *focused)
+        .unwrap_or(0);
+
+    let prev = if current == 0 {
+        workspace.windows.len() - 1
+    } else {
+        current - 1
+    };
+
+    let window = workspace.windows[prev];
+
+    conn.set_input_focus(InputFocus::POINTER_ROOT, window, x11rb::CURRENT_TIME)?;
+
+    conn.configure_window(
+        window,
+        &ConfigureWindowAux::new().stack_mode(StackMode::ABOVE),
+    )?;
+
+    *focused = Some(window);
+    conn.flush()?;
+
     Ok(())
 }
