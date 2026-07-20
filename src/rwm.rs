@@ -10,6 +10,15 @@ struct Workspace {
     windows: Vec<Window>,
 }
 
+struct FullscreenState {
+    window: Window,
+    x: i32,
+    y: i32,
+    width: u32,
+    height: u32,
+    fullscreen: bool,
+}
+
 pub fn run() -> Result<(), Box<dyn std::error::Error>> {
     let bindings = bindings();
 
@@ -76,6 +85,8 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
     ];
 
     let mut current = 0;
+
+    let mut fullscreen_states: Vec<FullscreenState> = Vec::new();
 
     loop {
         let event = conn.wait_for_event()?;
@@ -183,7 +194,7 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
                             }
                             "fullscreen" => {
                                 if let Some(window) = focused {
-                                    fullscreen(&conn, window, screen)?;
+                                    fullscreen(&conn, &mut fullscreen_states, window, screen)?;
                                 }
                             }
                             "workspace 1" => {
@@ -358,15 +369,55 @@ fn resize_window<C: Connection>(
 }
 fn fullscreen<C: Connection>(
     conn: &C,
+    states: &mut Vec<FullscreenState>,
     window: Window,
     screen: &Screen,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    let values = ConfigureWindowAux::new()
-        .x(0)
-        .y(0)
-        .width(screen.width_in_pixels as u32)
-        .height(screen.height_in_pixels as u32);
-    conn.configure_window(window, &values)?;
+    if let Some(state) = states.iter_mut().find(|s| s.window == window) {
+        if state.fullscreen {
+            conn.configure_window(
+                window,
+                &ConfigureWindowAux::new()
+                    .x(state.x)
+                    .y(state.y)
+                    .width(state.width)
+                    .height(state.height),
+            )?;
+
+            state.fullscreen = false;
+        } else {
+            conn.configure_window(
+                window,
+                &ConfigureWindowAux::new()
+                    .x(0)
+                    .y(0)
+                    .width(screen.width_in_pixels as u32)
+                    .height(screen.height_in_pixels as u32),
+            )?;
+
+            state.fullscreen = true;
+        }
+    } else {
+        let geom = conn.get_geometry(window)?.reply()?;
+
+        states.push(FullscreenState {
+            window,
+            x: geom.x.into(),
+            y: geom.y.into(),
+            width: geom.width.into(),
+            height: geom.height.into(),
+            fullscreen: true,
+        });
+
+        conn.configure_window(
+            window,
+            &ConfigureWindowAux::new()
+                .x(0)
+                .y(0)
+                .width(screen.width_in_pixels as u32)
+                .height(screen.height_in_pixels as u32),
+        )?;
+    }
 
     conn.flush()?;
     Ok(())
