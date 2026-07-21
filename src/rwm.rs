@@ -1,4 +1,7 @@
-use crate::{bar, config::bindings};
+use crate::{
+    bar,
+    config::{BAR, bindings},
+};
 use std::{process, process::Command};
 use x11rb::{
     connect,
@@ -21,6 +24,7 @@ struct FullscreenState {
 
 pub fn run() -> Result<(), Box<dyn std::error::Error>> {
     let bindings = bindings();
+    let mut show_bar = BAR;
 
     let (conn, screen_num) = connect(None)?;
     let screen = &conn.setup().roots[screen_num];
@@ -344,6 +348,17 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
                             "focus right" => {
                                 focus_next(&conn, &workspaces[current], &mut focused)?;
                             }
+                            "toggle bar" => {
+                                show_bar = !show_bar;
+
+                                if show_bar {
+                                    conn.map_window(bar.window)?;
+                                } else {
+                                    conn.unmap_window(bar.window)?;
+                                }
+
+                                conn.flush()?;
+                            }
                             cmd => {
                                 Command::new(cmd).spawn()?;
                             }
@@ -355,8 +370,13 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
 
             _ => {}
         }
-        bar::draw(&conn, &bar, current)?;
-        conn.flush()?;
+        if show_bar {
+            bar::draw(&conn, &bar, current)?;
+            conn.flush()?;
+        } else {
+            conn.unmap_window(bar.window)?;
+            conn.flush()?;
+        }
     }
 }
 fn modifiers_match(event: KeyButMask, binding: ModMask) -> bool {

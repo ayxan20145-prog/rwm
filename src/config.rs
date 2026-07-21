@@ -22,6 +22,8 @@ const TERM: &str = "kitty";
 // Choose your application launcher
 const LAUNCHER: &str = "dmenu_run";
 
+pub const BAR: bool = true;
+
 pub fn bindings() -> Vec<KeyBinding> {
     vec![
         // =========================
@@ -39,6 +41,12 @@ pub fn bindings() -> Vec<KeyBinding> {
             modifiers: MOD,
             key: 24, // q
             action: "close",
+        },
+        // Toggle bar
+        KeyBinding {
+            modifiers: MOD,
+            key: 56, // b
+            action: "toggle bar",
         },
         // =========================
         // Moving windows
