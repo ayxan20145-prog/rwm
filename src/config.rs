@@ -17,10 +17,10 @@ pub struct KeyBinding {
 const MOD: ModMask = ModMask::M4;
 
 // Choose your terminal emulator
-const TERM: &'static str = "kitty";
+const TERM: &str = "kitty";
 
 // Choose your application launcher
-const LAUNCHER: &'static str = "dmenu_run";
+const LAUNCHER: &str = "dmenu_run";
 
 pub fn bindings() -> Vec<KeyBinding> {
     vec![
