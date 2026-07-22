@@ -249,6 +249,28 @@ pub fn bindings() -> Vec<KeyBinding> {
             action: "focus right",
         },
         // =========================
+        // Volume controls
+        // =========================
+
+        // Increase volume
+        KeyBinding {
+            modifiers: ModMask::default(),
+            key: 122, // fn + f2
+            action: "volume down",
+        },
+        // Decrease volume
+        KeyBinding {
+            modifiers: ModMask::default(),
+            key: 123, // fn + f3
+            action: "volume up",
+        },
+        // Mute
+        KeyBinding {
+            modifiers: ModMask::default(),
+            key: 121, // fn + f4
+            action: "mute",
+        },
+        // =========================
         // Applications
         // =========================
 

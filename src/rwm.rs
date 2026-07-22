@@ -436,6 +436,21 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
 
                                 conn.flush()?;
                             }
+                            "volume up" => {
+                                Command::new("wpctl")
+                                    .args(["set-volume", "@DEFAULT_AUDIO_SINK@", "5%+"])
+                                    .spawn()?;
+                            }
+                            "volume down" => {
+                                Command::new("wpctl")
+                                    .args(["set-volume", "@DEFAULT_AUDIO_SINK@", "5%-"])
+                                    .spawn()?;
+                            }
+                            "mute" => {
+                                Command::new("wpctl")
+                                    .args(["set-mute", "@DEFAULT_AUDIO_SINK@", "toggle"])
+                                    .spawn()?;
+                            }
                             cmd => {
                                 Command::new(cmd).spawn()?;
                             }
