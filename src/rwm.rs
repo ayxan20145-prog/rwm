@@ -497,7 +497,7 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
                                 }
                             }
                             cmd => {
-                                Command::new(cmd).spawn()?;
+                                Command::new("sh").arg("-c").arg(cmd).spawn()?;
                             }
                         }
                     }
