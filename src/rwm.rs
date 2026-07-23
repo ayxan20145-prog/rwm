@@ -161,26 +161,54 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
                             }
                             "move left" => {
                                 if let Some(window) = focused {
-                                    let geom = conn.get_geometry(window)?.reply()?;
-                                    move_window(&conn, window, geom.x as i32 - 20, geom.y as i32)?;
+                                    if is_floating(&workspaces[current], window) {
+                                        let geom = conn.get_geometry(window)?.reply()?;
+                                        move_window(
+                                            &conn,
+                                            window,
+                                            geom.x as i32 - 20,
+                                            geom.y as i32,
+                                        )?;
+                                    }
                                 }
                             }
                             "move down" => {
                                 if let Some(window) = focused {
-                                    let geom = conn.get_geometry(window)?.reply()?;
-                                    move_window(&conn, window, geom.x as i32, geom.y as i32 + 20)?;
+                                    if is_floating(&workspaces[current], window) {
+                                        let geom = conn.get_geometry(window)?.reply()?;
+                                        move_window(
+                                            &conn,
+                                            window,
+                                            geom.x as i32,
+                                            geom.y as i32 + 20,
+                                        )?;
+                                    }
                                 }
                             }
                             "move up" => {
                                 if let Some(window) = focused {
-                                    let geom = conn.get_geometry(window)?.reply()?;
-                                    move_window(&conn, window, geom.x as i32, geom.y as i32 - 20)?;
+                                    if is_floating(&workspaces[current], window) {
+                                        let geom = conn.get_geometry(window)?.reply()?;
+                                        move_window(
+                                            &conn,
+                                            window,
+                                            geom.x as i32,
+                                            geom.y as i32 - 20,
+                                        )?;
+                                    }
                                 }
                             }
                             "move right" => {
                                 if let Some(window) = focused {
-                                    let geom = conn.get_geometry(window)?.reply()?;
-                                    move_window(&conn, window, geom.x as i32 + 20, geom.y as i32)?;
+                                    if is_floating(&workspaces[current], window) {
+                                        let geom = conn.get_geometry(window)?.reply()?;
+                                        move_window(
+                                            &conn,
+                                            window,
+                                            geom.x as i32 + 20,
+                                            geom.y as i32,
+                                        )?;
+                                    }
                                 }
                             }
                             "increase width" => {
@@ -754,4 +782,12 @@ fn toggle_floating(workspace: &mut Workspace, window: Window) {
     if let Some(client) = workspace.windows.iter_mut().find(|c| c.window == window) {
         client.floating = !client.floating;
     }
+}
+fn is_floating(workspace: &Workspace, window: Window) -> bool {
+    workspace
+        .windows
+        .iter()
+        .find(|c| c.window == window)
+        .map(|c| c.floating)
+        .unwrap_or(false)
 }
