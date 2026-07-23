@@ -48,6 +48,12 @@ pub fn bindings() -> Vec<KeyBinding> {
             key: 56, // b
             action: "toggle bar",
         },
+        // Toggle floating
+        KeyBinding {
+            modifiers: MOD,
+            key: 55, // v
+            action: "toggle floating",
+        },
         // =========================
         // Moving windows
         // =========================

@@ -9,8 +9,12 @@ use x11rb::{
     protocol::{Event, xproto::*},
 };
 
+struct Client {
+    window: Window,
+    floating: bool,
+}
 struct Workspace {
-    windows: Vec<Window>,
+    windows: Vec<Client>,
 }
 
 struct FullscreenState {
@@ -111,7 +115,10 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
 
         match event {
             Event::MapRequest(e) => {
-                workspaces[current].windows.push(e.window);
+                workspaces[current].windows.push(Client {
+                    window: e.window,
+                    floating: false,
+                });
                 focused = Some(e.window);
 
                 conn.map_window(e.window)?;
@@ -123,17 +130,21 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
             }
             Event::DestroyNotify(e) => {
                 for workspace in &mut workspaces {
-                    workspace.windows.retain(|&w| w != e.window);
+                    workspace.windows.retain(|c| c.window != e.window);
                 }
 
                 tile(&conn, &workspaces[current], screen)?;
 
                 if focused == Some(e.window) {
-                    focused = workspaces[current].windows.last().copied();
+                    focused = workspaces[current].windows.last().map(|c| c.window);
                 }
             }
             Event::FocusIn(e) => {
-                if workspaces[current].windows.contains(&e.event) {
+                if workspaces[current]
+                    .windows
+                    .iter()
+                    .any(|c| c.window == e.event)
+                {
                     focused = Some(e.event);
                 }
             }
@@ -451,6 +462,12 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
                                     .args(["set-mute", "@DEFAULT_AUDIO_SINK@", "toggle"])
                                     .spawn()?;
                             }
+                            "toggle floating" => {
+                                if let Some(window) = focused {
+                                    toggle_floating(&mut workspaces[current], window);
+                                    tile(&conn, &workspaces[current], screen)?;
+                                }
+                            }
                             cmd => {
                                 Command::new(cmd).spawn()?;
                             }
@@ -567,17 +584,17 @@ fn switch_workspace<C: Connection>(
         return Ok(());
     }
 
-    for &window in &workspaces[*current].windows {
-        conn.unmap_window(window)?;
+    for client in &workspaces[*current].windows {
+        conn.unmap_window(client.window)?;
     }
 
     *current = new;
 
-    for &window in &workspaces[*current].windows {
-        conn.map_window(window)?;
+    for client in &workspaces[*current].windows {
+        conn.map_window(client.window)?;
     }
 
-    *focused = workspaces[*current].windows.last().copied();
+    *focused = workspaces[*current].windows.last().map(|c| c.window);
 
     tile(&conn, &workspaces[*current], screen)?;
 
@@ -592,8 +609,11 @@ fn move_to_workspace<C: Connection>(
     window: Window,
     screen: &Screen,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    workspaces[current].windows.retain(|&w| w != window);
-    workspaces[target].windows.push(window);
+    workspaces[current].windows.retain(|c| c.window != window);
+    workspaces[target].windows.push(Client {
+        window,
+        floating: false,
+    });
 
     if current != target {
         conn.unmap_window(window)?;
@@ -616,11 +636,11 @@ fn focus_next<C: Connection>(
     let current = workspace
         .windows
         .iter()
-        .position(|&w| Some(w) == *focused)
+        .position(|c| Some(c.window) == *focused)
         .unwrap_or(0);
 
     let next = (current + 1) % workspace.windows.len();
-    let window = workspace.windows[next];
+    let window = workspace.windows[next].window;
 
     conn.set_input_focus(InputFocus::POINTER_ROOT, window, x11rb::CURRENT_TIME)?;
 
@@ -646,7 +666,7 @@ fn focus_prev<C: Connection>(
     let current = workspace
         .windows
         .iter()
-        .position(|&w| Some(w) == *focused)
+        .position(|c| Some(c.window) == *focused)
         .unwrap_or(0);
 
     let prev = if current == 0 {
@@ -655,7 +675,7 @@ fn focus_prev<C: Connection>(
         current - 1
     };
 
-    let window = workspace.windows[prev];
+    let window = workspace.windows[prev].window;
 
     conn.set_input_focus(InputFocus::POINTER_ROOT, window, x11rb::CURRENT_TIME)?;
 
@@ -674,9 +694,14 @@ fn tile<C: Connection>(
     workspace: &Workspace,
     screen: &Screen,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    let windows = &workspace.windows;
+    let tiled: Vec<Window> = workspace
+        .windows
+        .iter()
+        .filter(|c| !c.floating)
+        .map(|c| c.window)
+        .collect();
 
-    if windows.is_empty() {
+    if tiled.is_empty() {
         return Ok(());
     }
 
@@ -685,9 +710,9 @@ fn tile<C: Connection>(
 
     let master_width = width * 60 / 100;
 
-    if windows.len() == 1 {
+    if tiled.len() == 1 {
         conn.configure_window(
-            windows[0],
+            tiled[0],
             &ConfigureWindowAux::new()
                 .x(0)
                 .y(0)
@@ -699,7 +724,7 @@ fn tile<C: Connection>(
     }
 
     conn.configure_window(
-        windows[0],
+        tiled[0],
         &ConfigureWindowAux::new()
             .x(0)
             .y(0)
@@ -707,10 +732,10 @@ fn tile<C: Connection>(
             .height(height),
     )?;
 
-    let stack_count = windows.len() - 1;
+    let stack_count = tiled.len() - 1;
     let stack_height = height / stack_count as u32;
 
-    for (i, window) in windows[1..].iter().enumerate() {
+    for (i, window) in tiled[1..].iter().enumerate() {
         conn.configure_window(
             *window,
             &ConfigureWindowAux::new()
@@ -724,4 +749,9 @@ fn tile<C: Connection>(
     conn.flush()?;
 
     Ok(())
+}
+fn toggle_floating(workspace: &mut Workspace, window: Window) {
+    if let Some(client) = workspace.windows.iter_mut().find(|c| c.window == window) {
+        client.floating = !client.floating;
+    }
 }
