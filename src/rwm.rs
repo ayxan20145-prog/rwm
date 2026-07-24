@@ -65,35 +65,12 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
     let mut focused: Option<Window> = None;
 
     // Workspace creation
-    let mut workspaces = vec![
-        Workspace {
+    let mut workspaces = Vec::new();
+    for _ in 0..9 {
+        workspaces.push(Workspace {
             windows: Vec::new(),
-        },
-        Workspace {
-            windows: Vec::new(),
-        },
-        Workspace {
-            windows: Vec::new(),
-        },
-        Workspace {
-            windows: Vec::new(),
-        },
-        Workspace {
-            windows: Vec::new(),
-        },
-        Workspace {
-            windows: Vec::new(),
-        },
-        Workspace {
-            windows: Vec::new(),
-        },
-        Workspace {
-            windows: Vec::new(),
-        },
-        Workspace {
-            windows: Vec::new(),
-        },
-    ];
+        })
+    }
     let mut current = 0;
     let mut fullscreen_states: Vec<FullscreenState> = Vec::new();
 
