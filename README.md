@@ -12,14 +12,14 @@ rwm is a window manager written in rust
 ```bash
 git clone https://github.com/ayxan20145-prog/rwm.git
 cd rwm
-chmod +x install.sh
-./install.sh
+chmod +x scripts/install.sh
+./scripts/install.sh
 ```
 
 ## Uninstall
 ```bash
-chmod +x uninstall.sh
-./uninstall.sh
+chmod +x scripts/uninstall.sh
+./scripts/uninstall.sh
 ```
 
 ## Start rwm
