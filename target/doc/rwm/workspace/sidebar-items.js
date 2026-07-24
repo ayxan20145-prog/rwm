@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"fn":["focus_next","focus_prev","fullscreen","is_floating","move_to_workspace","move_window","resize_window","switch_workspace","toggle_floating"],"struct":["Client","FullscreenState","Workspace"]};

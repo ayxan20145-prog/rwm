@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"constant":["BAR","LAUNCHER","MOD","TERM"],"fn":["bindings"],"struct":["KeyBinding"]};
