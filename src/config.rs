@@ -1,29 +1,66 @@
+//! # rwm Configuration
+//!
+//! This module contains configuration values for the window manager.
+//!
+//! It defines:
+//! - Keyboard shortcuts
+//! - Modifier keys
+//! - Default applications
+//! - Bar settings
+//!
+//! Keybindings are stored as [`KeyBinding`] structs and loaded by the
+//! window manager during startup.
+
 use x11rb::protocol::xproto::ModMask;
 
+/// Represents a keyboard shortcut handled by the window manager.
+///
+/// A key binding consists of:
+/// - Modifier keys (Super, Alt, Ctrl, Shift, etc.)
+/// - An X11 keycode
+/// - An action string interpreted by the key handler
+
 pub struct KeyBinding {
-    // Modifier keys (Super, Alt, Ctrl, Shift, etc.)
+    /// Modifier keys required for this shortcut.
+    ///
+    /// - [`ModMask::M4`] = Super/Windows key
+    /// - [`ModMask::M1`] = Alt key
     pub modifiers: ModMask,
 
-    // X11 Keycode (you can find it with xev)
+    /// X11 keycode for the key.
+    ///
+    /// Keycodes can be found using tools like `xev`.
     pub key: u8,
 
-    // Action that the WM will execute
+    /// Action name executed by the window manager.
     pub action: &'static str,
 }
 
-// Choose your modifier key for the WM
-//  M4: Super/Windows
-//  M1: Alt
-const MOD: ModMask = ModMask::M4;
+/// Default modifier key used for window manager shortcuts.
+pub const MOD: ModMask = ModMask::M4;
 
-// Choose your terminal emulator
-const TERM: &str = "kitty";
+/// Default terminal emulator.
+pub const TERM: &str = "kitty";
 
-// Choose your application launcher
-const LAUNCHER: &str = "dmenu_run";
+/// Default application launcher.
+pub const LAUNCHER: &str = "dmenu_run";
 
+/// Controls whether the status bar is enabled.
 pub const BAR: bool = true;
 
+/// Returns all configured keyboard shortcuts.
+///
+/// This function defines every key combination supported by rwm,
+/// including:
+///
+/// - Window manager controls
+/// - Window movement
+/// - Window resizing
+/// - Fullscreen mode
+/// - Workspace switching
+/// - Focus movement
+/// - Volume controls
+/// - Application launching
 pub fn bindings() -> Vec<KeyBinding> {
     vec![
         // =========================
