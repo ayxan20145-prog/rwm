@@ -43,7 +43,7 @@ pub const MOD: ModMask = ModMask::M4;
 pub const TERM: &str = "kitty";
 
 /// Default application launcher.
-pub const LAUNCHER: &str = "dmenu_run";
+pub const LAUNCHER: &str = "rmenu";
 
 /// Controls whether the status bar is enabled.
 pub const BAR: bool = true;
