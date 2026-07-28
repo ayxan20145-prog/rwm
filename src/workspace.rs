@@ -27,6 +27,7 @@ pub fn switch_workspace<C: Connection>(
     new: usize,
     focused: &mut Option<Window>,
     screen: &Screen,
+    show_bar: bool,
 ) -> Result<(), Box<dyn std::error::Error>> {
     if *current == new {
         return Ok(());
@@ -44,7 +45,7 @@ pub fn switch_workspace<C: Connection>(
 
     *focused = workspaces[*current].windows.last().map(|c| c.window);
 
-    crate::layout::tile(conn, &workspaces[*current], screen)?;
+    crate::layout::tile(conn, &workspaces[*current], screen, show_bar)?;
 
     conn.flush()?;
     Ok(())
@@ -58,6 +59,7 @@ pub fn move_to_workspace<C: Connection>(
     target: usize,
     window: Window,
     screen: &Screen,
+    show_bar: bool,
 ) -> Result<(), Box<dyn std::error::Error>> {
     workspaces[current].windows.retain(|c| c.window != window);
     workspaces[target].windows.push(Client {
@@ -69,7 +71,7 @@ pub fn move_to_workspace<C: Connection>(
         conn.unmap_window(window)?;
     }
 
-    crate::layout::tile(conn, &workspaces[current], screen)?;
+    crate::layout::tile(conn, &workspaces[current], screen, show_bar)?;
 
     conn.flush()?;
     Ok(())

@@ -1,5 +1,6 @@
 use x11rb::connection::Connection;
 use x11rb::protocol::xproto::*;
+use crate::config::BAR_HEIGHT;
 
 use crate::workspace::Workspace;
 
@@ -8,6 +9,7 @@ pub fn tile<C: Connection>(
     conn: &C,
     workspace: &Workspace,
     screen: &Screen,
+    show_bar: bool,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let tiled: Vec<Window> = workspace
         .windows
@@ -20,6 +22,12 @@ pub fn tile<C: Connection>(
         return Ok(());
     }
 
+    let bar_height = if show_bar {
+        BAR_HEIGHT
+    } else {
+        0
+    };
+
     let width = screen.width_in_pixels as u32;
     let height = screen.height_in_pixels as u32;
     let master_width = width * 60 / 100;
@@ -29,7 +37,7 @@ pub fn tile<C: Connection>(
             tiled[0],
             &ConfigureWindowAux::new()
                 .x(0)
-                .y(0)
+                .y(bar_height as i32)
                 .width(width)
                 .height(height),
         )?;
@@ -41,7 +49,7 @@ pub fn tile<C: Connection>(
         tiled[0],
         &ConfigureWindowAux::new()
             .x(0)
-            .y(0)
+            .y(bar_height as i32)
             .width(master_width)
             .height(height),
     )?;
@@ -55,7 +63,7 @@ pub fn tile<C: Connection>(
             *window,
             &ConfigureWindowAux::new()
                 .x(master_width as i32)
-                .y((i as u32 * stack_height) as i32)
+                .y((bar_height + i as u32 * stack_height) as i32)
                 .width(width - master_width)
                 .height(stack_height),
         )?;

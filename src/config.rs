@@ -48,6 +48,9 @@ pub const LAUNCHER: &str = "rmenu";
 /// Controls whether the status bar is enabled.
 pub const BAR: bool = true;
 
+/// Height of the bar
+pub const BAR_HEIGHT: u32 = if BAR { 25 } else { 0 };
+
 /// Returns all configured keyboard shortcuts.
 ///
 /// This function defines every key combination supported by rwm,

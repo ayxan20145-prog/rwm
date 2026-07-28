@@ -1,4 +1,5 @@
 use x11rb::{COPY_FROM_PARENT, connection::Connection, protocol::xproto::*};
+use crate::config::BAR_HEIGHT;
 
 /// Represents the status bar window and its graphics context.
 pub struct Bar {
@@ -25,7 +26,7 @@ pub fn create_bar<C: Connection>(
         0,
         0,
         screen.width_in_pixels,
-        25,
+        BAR_HEIGHT as u16,
         0,
         WindowClass::INPUT_OUTPUT,
         0,

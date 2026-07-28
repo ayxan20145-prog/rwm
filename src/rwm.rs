@@ -87,7 +87,7 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
                 focused = Some(e.window);
 
                 conn.map_window(e.window)?;
-                layout::tile(&conn, &workspaces[current], screen)?;
+                layout::tile(&conn, &workspaces[current], screen, show_bar)?;
                 conn.set_input_focus(InputFocus::POINTER_ROOT, e.window, x11rb::CURRENT_TIME)?;
                 conn.flush()?;
             }
@@ -96,7 +96,7 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
                 for workspace in &mut workspaces {
                     workspace.windows.retain(|c| c.window != e.window);
                 }
-                layout::tile(&conn, &workspaces[current], screen)?;
+                layout::tile(&conn, &workspaces[current], screen, show_bar)?;
                 if focused == Some(e.window) {
                     focused = workspaces[current].windows.last().map(|c| c.window);
                 }

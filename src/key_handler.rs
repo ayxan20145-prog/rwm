@@ -109,59 +109,59 @@ pub fn handle_key_press<C: Connection>(
                     }
                 }
 
-                "workspace 1" => switch_workspace(conn, workspaces, current, 0, focused, screen)?,
-                "workspace 2" => switch_workspace(conn, workspaces, current, 1, focused, screen)?,
-                "workspace 3" => switch_workspace(conn, workspaces, current, 2, focused, screen)?,
-                "workspace 4" => switch_workspace(conn, workspaces, current, 3, focused, screen)?,
-                "workspace 5" => switch_workspace(conn, workspaces, current, 4, focused, screen)?,
-                "workspace 6" => switch_workspace(conn, workspaces, current, 5, focused, screen)?,
-                "workspace 7" => switch_workspace(conn, workspaces, current, 6, focused, screen)?,
-                "workspace 8" => switch_workspace(conn, workspaces, current, 7, focused, screen)?,
-                "workspace 9" => switch_workspace(conn, workspaces, current, 8, focused, screen)?,
+                "workspace 1" => switch_workspace(conn, workspaces, current, 0, focused, screen, *show_bar)?,
+                "workspace 2" => switch_workspace(conn, workspaces, current, 1, focused, screen, *show_bar)?,
+                "workspace 3" => switch_workspace(conn, workspaces, current, 2, focused, screen, *show_bar)?,
+                "workspace 4" => switch_workspace(conn, workspaces, current, 3, focused, screen, *show_bar)?,
+                "workspace 5" => switch_workspace(conn, workspaces, current, 4, focused, screen, *show_bar)?,
+                "workspace 6" => switch_workspace(conn, workspaces, current, 5, focused, screen, *show_bar)?,
+                "workspace 7" => switch_workspace(conn, workspaces, current, 6, focused, screen, *show_bar)?,
+                "workspace 8" => switch_workspace(conn, workspaces, current, 7, focused, screen, *show_bar)?,
+                "workspace 9" => switch_workspace(conn, workspaces, current, 8, focused, screen, *show_bar)?,
 
                 "move to workspace 1" => {
                     if let Some(window) = *focused {
-                        move_to_workspace(conn, workspaces, *current, 0, window, screen)?;
+                        move_to_workspace(conn, workspaces, *current, 0, window, screen, *show_bar)?;
                     }
                 }
                 "move to workspace 2" => {
                     if let Some(window) = *focused {
-                        move_to_workspace(conn, workspaces, *current, 1, window, screen)?;
+                        move_to_workspace(conn, workspaces, *current, 1, window, screen, *show_bar)?;
                     }
                 }
                 "move to workspace 3" => {
                     if let Some(window) = *focused {
-                        move_to_workspace(conn, workspaces, *current, 2, window, screen)?;
+                        move_to_workspace(conn, workspaces, *current, 2, window, screen, *show_bar)?;
                     }
                 }
                 "move to workspace 4" => {
                     if let Some(window) = *focused {
-                        move_to_workspace(conn, workspaces, *current, 3, window, screen)?;
+                        move_to_workspace(conn, workspaces, *current, 3, window, screen, *show_bar)?;
                     }
                 }
                 "move to workspace 5" => {
                     if let Some(window) = *focused {
-                        move_to_workspace(conn, workspaces, *current, 4, window, screen)?;
+                        move_to_workspace(conn, workspaces, *current, 4, window, screen, *show_bar)?;
                     }
                 }
                 "move to workspace 6" => {
                     if let Some(window) = *focused {
-                        move_to_workspace(conn, workspaces, *current, 5, window, screen)?;
+                        move_to_workspace(conn, workspaces, *current, 5, window, screen, *show_bar)?;
                     }
                 }
                 "move to workspace 7" => {
                     if let Some(window) = *focused {
-                        move_to_workspace(conn, workspaces, *current, 6, window, screen)?;
+                        move_to_workspace(conn, workspaces, *current, 6, window, screen, *show_bar)?;
                     }
                 }
                 "move to workspace 8" => {
                     if let Some(window) = *focused {
-                        move_to_workspace(conn, workspaces, *current, 7, window, screen)?;
+                        move_to_workspace(conn, workspaces, *current, 7, window, screen, *show_bar)?;
                     }
                 }
                 "move to workspace 9" => {
                     if let Some(window) = *focused {
-                        move_to_workspace(conn, workspaces, *current, 8, window, screen)?;
+                        move_to_workspace(conn, workspaces, *current, 8, window, screen, *show_bar)?;
                     }
                 }
 
@@ -197,7 +197,7 @@ pub fn handle_key_press<C: Connection>(
                 "toggle floating" => {
                     if let Some(window) = *focused {
                         toggle_floating(&mut workspaces[*current], window);
-                        layout::tile(conn, &workspaces[*current], screen)?;
+                        layout::tile(conn, &workspaces[*current], screen, *show_bar)?;
                     }
                 }
 
