@@ -12,14 +12,14 @@
 //! window manager during startup.
 
 use x11rb::protocol::xproto::ModMask;
-use crate::keys::*;
+use crate::{keys::*, actions::Action};
 
 /// Represents a keyboard shortcut handled by the window manager.
 ///
 /// A key binding consists of:
 /// - Modifier keys (Super, Alt, Ctrl, Shift, etc.)
 /// - An X11 keycode
-/// - An action string interpreted by the key handler
+/// - An action enum interpreted by the key handler
 
 pub struct KeyBinding {
     /// Modifier keys required for this shortcut.
@@ -32,7 +32,7 @@ pub struct KeyBinding {
     pub key: u8,
 
     /// Action name executed by the window manager.
-    pub action: &'static str,
+    pub action: Action,
 }
 
 /// Default modifier key used for window manager shortcuts.
@@ -73,25 +73,25 @@ pub fn bindings() -> Vec<KeyBinding> {
         KeyBinding {
             modifiers: MOD | ModMask::SHIFT,
             key: E,
-            action: "exit",
+            action: Action::Exit,
         },
         // Close the focused window
         KeyBinding {
             modifiers: MOD,
             key: Q,
-            action: "close",
+            action: Action::Close,
         },
         // Toggle bar
         KeyBinding {
             modifiers: MOD,
             key: B,
-            action: "toggle bar",
+            action: Action::ToggleBar,
         },
         // Toggle floating
         KeyBinding {
             modifiers: MOD,
             key: V,
-            action: "toggle floating",
+            action: Action::ToggleFloating,
         },
         // =========================
         // Moving windows
@@ -101,43 +101,43 @@ pub fn bindings() -> Vec<KeyBinding> {
         KeyBinding {
             modifiers: MOD | ModMask::CONTROL,
             key: H,
-            action: "move left",
+            action: Action::MoveLeft,
         },
         KeyBinding {
             modifiers: MOD | ModMask::CONTROL,
             key: J,
-            action: "move down",
+            action: Action::MoveDown,
         },
         KeyBinding {
             modifiers: MOD | ModMask::CONTROL,
             key: K,
-            action: "move up",
+            action: Action::MoveUp,
         },
         KeyBinding {
             modifiers: MOD | ModMask::CONTROL,
             key: L,
-            action: "move right",
+            action: Action::MoveRight,
         },
         // Arrow key movement
         KeyBinding {
             modifiers: MOD | ModMask::CONTROL,
             key: LEFT,
-            action: "move left",
+            action: Action::MoveLeft,
         },
         KeyBinding {
             modifiers: MOD | ModMask::CONTROL,
             key: DOWN,
-            action: "move down",
+            action: Action::MoveDown,
         },
         KeyBinding {
             modifiers: MOD | ModMask::CONTROL,
             key: UP,
-            action: "move up",
+            action: Action::MoveUp,
         },
         KeyBinding {
             modifiers: MOD | ModMask::CONTROL,
             key: RIGHT,
-            action: "move right",
+            action: Action::MoveRight,
         },
         // =========================
         // Window resizing
@@ -147,29 +147,29 @@ pub fn bindings() -> Vec<KeyBinding> {
         KeyBinding {
             modifiers: MOD,
             key: EQUAL,
-            action: "increase width",
+            action: Action::IncreaseWidth,
         },
         KeyBinding {
             modifiers: MOD,
             key: MINUS,
-            action: "decrease width",
+            action: Action::DecreaseWidth,
         },
         // Change window height
         KeyBinding {
             modifiers: MOD | ModMask::SHIFT,
             key: EQUAL,
-            action: "increase height",
+            action: Action::IncreaseHeight,
         },
         KeyBinding {
             modifiers: MOD | ModMask::SHIFT,
             key: MINUS,
-            action: "decrease height",
+            action: Action::DecreaseHeight,
         },
         // Toggle full screen mode
         KeyBinding {
             modifiers: MOD,
             key: F,
-            action: "fullscreen",
+            action: Action::Fullscreen,
         },
         // =========================
         // Workspaces
@@ -179,93 +179,93 @@ pub fn bindings() -> Vec<KeyBinding> {
         KeyBinding {
             modifiers: MOD,
             key: KEY_1,
-            action: "workspace 1",
+            action: Action::Workspace(1),
         },
         KeyBinding {
             modifiers: MOD,
             key: KEY_2,
-            action: "workspace 2",
+            action: Action::Workspace(2),
         },
         KeyBinding {
             modifiers: MOD,
             key: KEY_3,
-            action: "workspace 3",
+            action: Action::Workspace(3),
         },
         KeyBinding {
             modifiers: MOD,
             key: KEY_4,
-            action: "workspace 4",
+            action: Action::Workspace(4),
         },
         KeyBinding {
             modifiers: MOD,
             key: KEY_5,
-            action: "workspace 5",
+            action: Action::Workspace(5),
         },
         KeyBinding {
             modifiers: MOD,
             key: KEY_6,
-            action: "workspace 6",
+            action: Action::Workspace(6),
         },
         KeyBinding {
             modifiers: MOD,
             key: KEY_7,
-            action: "workspace 7",
+            action: Action::Workspace(7),
         },
         KeyBinding {
             modifiers: MOD,
             key: KEY_8,
-            action: "workspace 8",
+            action: Action::Workspace(8),
         },
         KeyBinding {
             modifiers: MOD,
             key: KEY_9,
-            action: "workspace 9",
+            action: Action::Workspace(9),
         },
         // Move current window to workspace 1-9
         KeyBinding {
             modifiers: MOD | ModMask::SHIFT,
             key: KEY_1,
-            action: "move to workspace 1",
+            action: Action::MoveToWorkspace(1),
         },
         KeyBinding {
             modifiers: MOD | ModMask::SHIFT,
             key: KEY_2,
-            action: "move to workspace 2",
+            action: Action::MoveToWorkspace(2),
         },
         KeyBinding {
             modifiers: MOD | ModMask::SHIFT,
             key: KEY_3,
-            action: "move to workspace 3",
+            action: Action::MoveToWorkspace(3),
         },
         KeyBinding {
             modifiers: MOD | ModMask::SHIFT,
             key: KEY_4,
-            action: "move to workspace 4",
+            action: Action::MoveToWorkspace(4),
         },
         KeyBinding {
             modifiers: MOD | ModMask::SHIFT,
             key: KEY_5,
-            action: "move to workspace 5",
+            action: Action::MoveToWorkspace(5),
         },
         KeyBinding {
             modifiers: MOD | ModMask::SHIFT,
             key: KEY_6,
-            action: "move to workspace 6",
+            action: Action::MoveToWorkspace(6),
         },
         KeyBinding {
             modifiers: MOD | ModMask::SHIFT,
             key: KEY_7,
-            action: "move to workspace 7",
+            action: Action::MoveToWorkspace(7),
         },
         KeyBinding {
             modifiers: MOD | ModMask::SHIFT,
             key: KEY_8,
-            action: "move to workspace 8",
+            action: Action::MoveToWorkspace(8),
         },
         KeyBinding {
             modifiers: MOD | ModMask::SHIFT,
             key: KEY_9,
-            action: "move to workspace 9",
+            action: Action::MoveToWorkspace(9),
         },
         // =========================
         // Focus
@@ -275,23 +275,23 @@ pub fn bindings() -> Vec<KeyBinding> {
         KeyBinding {
             modifiers: MOD,
             key: H,
-            action: "focus left",
+            action: Action::FocusLeft,
         },
         KeyBinding {
             modifiers: MOD,
             key: L,
-            action: "focus right",
+            action: Action::FocusRight,
         },
         // Arrow key movement
         KeyBinding {
             modifiers: MOD,
             key: LEFT,
-            action: "focus left",
+            action: Action::FocusLeft,
         },
         KeyBinding {
             modifiers: MOD,
             key: RIGHT,
-            action: "focus right",
+            action: Action::FocusRight,
         },
         // =========================
         // Volume controls
@@ -301,19 +301,19 @@ pub fn bindings() -> Vec<KeyBinding> {
         KeyBinding {
             modifiers: ModMask::default(),
             key: VOLUME_DOWN,
-            action: "volume down",
+            action: Action::VolumeDown,
         },
         // Decrease volume
         KeyBinding {
             modifiers: ModMask::default(),
             key: VOLUME_UP,
-            action: "volume up",
+            action: Action::VolumeUp,
         },
         // Mute
         KeyBinding {
             modifiers: ModMask::default(),
             key: MUTE,
-            action: "mute",
+            action: Action::Mute,
         },
         // =========================
         // Applications
@@ -323,13 +323,13 @@ pub fn bindings() -> Vec<KeyBinding> {
         KeyBinding {
             modifiers: MOD,
             key: ENTER,
-            action: TERM,
+            action: Action::Run(TERM),
         },
         // Open application launcher
         KeyBinding {
             modifiers: MOD,
             key: D,
-            action: LAUNCHER,
+            action: Action::Run(LAUNCHER),
         },
     ]
 }

@@ -23,6 +23,7 @@
 //! - [`rwm`] - Main window manager event loop.
 //! - [`workspace`] - Workspace and client window management.
 //! - [`keys`] - X11 keycode definitions.
+//! - [`actions`] - Window manager actions
 
 mod bar;
 mod config;
@@ -31,6 +32,7 @@ mod layout;
 mod rwm;
 mod workspace;
 mod keys;
+mod actions;
 
 /// Program entry point.
 fn main() -> Result<(), Box<dyn std::error::Error>> {

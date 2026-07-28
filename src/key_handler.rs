@@ -10,6 +10,7 @@ use crate::{
         FullscreenState, Workspace, focus_next, focus_prev, fullscreen, is_floating,
         move_to_workspace, move_window, resize_window, switch_workspace, toggle_floating,
     },
+    actions::Action,
 };
 
 /// Check if the event modifiers match the binding modifiers.
@@ -36,16 +37,16 @@ pub fn handle_key_press<C: Connection>(
     for binding in bindings {
         if event.detail == binding.key && modifiers_match(event.state, binding.modifiers) {
             match binding.action {
-                "exit" => std::process::exit(0),
+                Action::Exit => std::process::exit(0),
 
-                "close" => {
+                Action::Close => {
                     if let Some(window) = *focused {
                         conn.kill_client(window)?;
                         conn.flush()?;
                     }
                 }
 
-                "move left" => {
+                Action::MoveLeft => {
                     if let Some(window) = *focused {
                         if is_floating(&workspaces[*current], window) {
                             let geom = conn.get_geometry(window)?.reply()?;
@@ -53,7 +54,7 @@ pub fn handle_key_press<C: Connection>(
                         }
                     }
                 }
-                "move down" => {
+                Action::MoveDown => {
                     if let Some(window) = *focused {
                         if is_floating(&workspaces[*current], window) {
                             let geom = conn.get_geometry(window)?.reply()?;
@@ -61,7 +62,7 @@ pub fn handle_key_press<C: Connection>(
                         }
                     }
                 }
-                "move up" => {
+                Action::MoveUp => {
                     if let Some(window) = *focused {
                         if is_floating(&workspaces[*current], window) {
                             let geom = conn.get_geometry(window)?.reply()?;
@@ -69,7 +70,7 @@ pub fn handle_key_press<C: Connection>(
                         }
                     }
                 }
-                "move right" => {
+                Action::MoveRight => {
                     if let Some(window) = *focused {
                         if is_floating(&workspaces[*current], window) {
                             let geom = conn.get_geometry(window)?.reply()?;
@@ -78,97 +79,49 @@ pub fn handle_key_press<C: Connection>(
                     }
                 }
 
-                "increase width" => {
+                Action::IncreaseWidth => {
                     if let Some(window) = *focused {
                         let geom = conn.get_geometry(window)?.reply()?;
                         resize_window(conn, window, geom.width as u32 + 20, geom.height as u32)?;
                     }
                 }
-                "decrease width" => {
+                Action::DecreaseWidth => {
                     if let Some(window) = *focused {
                         let geom = conn.get_geometry(window)?.reply()?;
                         resize_window(conn, window, geom.width as u32 - 20, geom.height as u32)?;
                     }
                 }
-                "increase height" => {
+                Action::IncreaseHeight => {
                     if let Some(window) = *focused {
                         let geom = conn.get_geometry(window)?.reply()?;
                         resize_window(conn, window, geom.width as u32, geom.height as u32 + 20)?;
                     }
                 }
-                "decrease height" => {
+                Action::DecreaseHeight => {
                     if let Some(window) = *focused {
                         let geom = conn.get_geometry(window)?.reply()?;
                         resize_window(conn, window, geom.width as u32, geom.height as u32 - 20)?;
                     }
                 }
 
-                "fullscreen" => {
+                Action::Fullscreen => {
                     if let Some(window) = *focused {
                         fullscreen(conn, fullscreen_states, window, screen)?;
                     }
                 }
 
-                "workspace 1" => switch_workspace(conn, workspaces, current, 0, focused, screen, *show_bar)?,
-                "workspace 2" => switch_workspace(conn, workspaces, current, 1, focused, screen, *show_bar)?,
-                "workspace 3" => switch_workspace(conn, workspaces, current, 2, focused, screen, *show_bar)?,
-                "workspace 4" => switch_workspace(conn, workspaces, current, 3, focused, screen, *show_bar)?,
-                "workspace 5" => switch_workspace(conn, workspaces, current, 4, focused, screen, *show_bar)?,
-                "workspace 6" => switch_workspace(conn, workspaces, current, 5, focused, screen, *show_bar)?,
-                "workspace 7" => switch_workspace(conn, workspaces, current, 6, focused, screen, *show_bar)?,
-                "workspace 8" => switch_workspace(conn, workspaces, current, 7, focused, screen, *show_bar)?,
-                "workspace 9" => switch_workspace(conn, workspaces, current, 8, focused, screen, *show_bar)?,
+                Action::Workspace(ws) => switch_workspace(conn, workspaces, current, (ws - 1) as usize, focused, screen, *show_bar)?,
 
-                "move to workspace 1" => {
+                Action::MoveToWorkspace(ws) => {
                     if let Some(window) = *focused {
-                        move_to_workspace(conn, workspaces, *current, 0, window, screen, *show_bar)?;
+                        move_to_workspace(conn, workspaces, *current, (ws - 1) as usize, window, screen, *show_bar)?;
                     }
                 }
-                "move to workspace 2" => {
-                    if let Some(window) = *focused {
-                        move_to_workspace(conn, workspaces, *current, 1, window, screen, *show_bar)?;
-                    }
-                }
-                "move to workspace 3" => {
-                    if let Some(window) = *focused {
-                        move_to_workspace(conn, workspaces, *current, 2, window, screen, *show_bar)?;
-                    }
-                }
-                "move to workspace 4" => {
-                    if let Some(window) = *focused {
-                        move_to_workspace(conn, workspaces, *current, 3, window, screen, *show_bar)?;
-                    }
-                }
-                "move to workspace 5" => {
-                    if let Some(window) = *focused {
-                        move_to_workspace(conn, workspaces, *current, 4, window, screen, *show_bar)?;
-                    }
-                }
-                "move to workspace 6" => {
-                    if let Some(window) = *focused {
-                        move_to_workspace(conn, workspaces, *current, 5, window, screen, *show_bar)?;
-                    }
-                }
-                "move to workspace 7" => {
-                    if let Some(window) = *focused {
-                        move_to_workspace(conn, workspaces, *current, 6, window, screen, *show_bar)?;
-                    }
-                }
-                "move to workspace 8" => {
-                    if let Some(window) = *focused {
-                        move_to_workspace(conn, workspaces, *current, 7, window, screen, *show_bar)?;
-                    }
-                }
-                "move to workspace 9" => {
-                    if let Some(window) = *focused {
-                        move_to_workspace(conn, workspaces, *current, 8, window, screen, *show_bar)?;
-                    }
-                }
+                Action::FocusLeft => focus_prev(conn, &workspaces[*current], focused)?,
 
-                "focus left" => focus_prev(conn, &workspaces[*current], focused)?,
-                "focus right" => focus_next(conn, &workspaces[*current], focused)?,
+                Action::FocusRight => focus_next(conn, &workspaces[*current], focused)?,
 
-                "toggle bar" => {
+                Action::ToggleBar => {
                     *show_bar = !*show_bar;
                     if *show_bar {
                         conn.map_window(bar.window)?;
@@ -178,30 +131,29 @@ pub fn handle_key_press<C: Connection>(
                     conn.flush()?;
                 }
 
-                "volume up" => {
-                    Command::new("wpctl")
-                        .args(["set-volume", "@DEFAULT_AUDIO_SINK@", "5%+"])
-                        .spawn()?;
-                }
-                "volume down" => {
+                Action::VolumeDown => {
                     Command::new("wpctl")
                         .args(["set-volume", "@DEFAULT_AUDIO_SINK@", "5%-"])
                         .spawn()?;
                 }
-                "mute" => {
+                Action::VolumeUp => {
+                    Command::new("wpctl")
+                        .args(["set-volume", "@DEFAULT_AUDIO_SINK@", "5%+"])
+                        .spawn()?;
+                }
+                Action::Mute => {
                     Command::new("wpctl")
                         .args(["set-mute", "@DEFAULT_AUDIO_SINK@", "toggle"])
                         .spawn()?;
                 }
 
-                "toggle floating" => {
+                Action::ToggleFloating => {
                     if let Some(window) = *focused {
                         toggle_floating(&mut workspaces[*current], window);
                         layout::tile(conn, &workspaces[*current], screen, *show_bar)?;
                     }
                 }
-
-                cmd => {
+                Action::Run(cmd) => {
                     Command::new("sh").arg("-c").arg(cmd).spawn()?;
                 }
             }
