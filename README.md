@@ -27,3 +27,6 @@ chmod +x scripts/uninstall.sh
 echo "exec rwm" >> ~/.xinitrc
 startx
 ```
+
+## Docs
+https://ayxan20145-prog.github.io/rwm/
