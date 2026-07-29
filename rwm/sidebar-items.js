@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["main"],"mod":["actions","bar","config","key_handler","keys","layout","rwm","workspace"]};
+window.SIDEBAR_ITEMS = {"fn":["main"],"mod":["actions","bar","config","ewmh","key_handler","keys","layout","rwm","workspace"]};

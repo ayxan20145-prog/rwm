@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["intern_atoms","set_active_window","setup_ewmh"],"struct":["EwmhAtoms"]};
