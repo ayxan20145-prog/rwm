@@ -3,6 +3,7 @@ use crate::{
     config::{BAR, bindings},
     key_handler, layout,
     workspace::*,
+    ewmh,
 };
 use x11rb::{
     connect,
@@ -58,6 +59,12 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
         )?;
     }
     conn.flush()?;
+
+    // EWMH setup
+    let atoms = ewmh::intern_atoms(&conn)?;
+    let _check_window = ewmh::setup_ewmh(&conn, screen, &atoms)?;
+
+    ewmh::set_active_window(&conn, screen.root, &atoms, 0)?;
 
     // Bar
     let bar = bar::create_bar(&conn, screen)?;
@@ -129,6 +136,9 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
 
             _ => {}
         }
+
+        let active_window = focused.unwrap_or(1);
+        ewmh::set_active_window(&conn, screen.root, &atoms, active_window)?;
 
         if show_bar {
             bar::draw(&conn, &bar, current)?;
