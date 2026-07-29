@@ -132,9 +132,11 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
 
         if show_bar {
             bar::draw(&conn, &bar, current)?;
+            layout::tile(&conn, &workspaces[current], screen, show_bar)?;
             conn.flush()?;
         } else {
             conn.unmap_window(bar.window)?;
+            layout::tile(&conn, &workspaces[current], screen, show_bar)?;
             conn.flush()?;
         }
     }
