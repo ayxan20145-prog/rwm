@@ -13,7 +13,7 @@ pub struct EwmhAtoms {
     pub check: Atom,
     pub supported: Atom,
     pub active_window: Atom,
-    pub utf8_string: Atom,   // needed for _NET_WM_NAME
+    pub utf8_string: Atom,
 }
 
 /// Initialise all needed atoms.
