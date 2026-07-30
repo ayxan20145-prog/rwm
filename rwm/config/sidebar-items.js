@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"constant":["BAR","BAR_HEIGHT","LAUNCHER","MOD","MOVE_STEP","RESIZE_STEP","TERM"],"fn":["bindings"],"struct":["KeyBinding"]};
+window.SIDEBAR_ITEMS = {"constant":["BAR","BAR_HEIGHT","LAUNCHER_CMD","MASTER_RATIO","MOD","MOVE_STEP","RESIZE_STEP","TERM_CMD","VOLUME_DOWN_CMD","VOLUME_MUTE_CMD","VOLUME_UP_CMD"],"fn":["bindings"],"struct":["KeyBinding"]};

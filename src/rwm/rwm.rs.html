@@ -137,7 +137,7 @@
 <a href=#137 id=137 data-nosnippet>137</a>            <span class="kw">_ </span>=&gt; {}
 <a href=#138 id=138 data-nosnippet>138</a>        }
 <a href=#139 id=139 data-nosnippet>139</a>
-<a href=#140 id=140 data-nosnippet>140</a>        <span class="kw">let </span>active_window = focused.unwrap_or(<span class="number">1</span>);
+<a href=#140 id=140 data-nosnippet>140</a>        <span class="kw">let </span>active_window = focused.unwrap_or(<span class="number">0</span>);
 <a href=#141 id=141 data-nosnippet>141</a>        ewmh::set_active_window(<span class="kw-2">&amp;</span>conn, screen.root, <span class="kw-2">&amp;</span>atoms, active_window)<span class="question-mark">?</span>;
 <a href=#142 id=142 data-nosnippet>142</a>
 <a href=#143 id=143 data-nosnippet>143</a>        <span class="kw">if </span>show_bar {
