@@ -12,7 +12,7 @@
 //! window manager during startup.
 
 use x11rb::protocol::xproto::ModMask;
-use crate::{keys::*, actions::Action};
+use crate::{keys::*, actions::{Action, Direction}};
 
 /// Represents a keyboard shortcut handled by the window manager.
 ///
@@ -101,43 +101,43 @@ pub fn bindings() -> Vec<KeyBinding> {
         KeyBinding {
             modifiers: MOD | ModMask::CONTROL,
             key: H,
-            action: Action::MoveLeft,
+            action: Action::Move(Direction::Left),
         },
         KeyBinding {
             modifiers: MOD | ModMask::CONTROL,
             key: J,
-            action: Action::MoveDown,
+            action: Action::Move(Direction::Down),
         },
         KeyBinding {
             modifiers: MOD | ModMask::CONTROL,
             key: K,
-            action: Action::MoveUp,
+            action: Action::Move(Direction::Up),
         },
         KeyBinding {
             modifiers: MOD | ModMask::CONTROL,
             key: L,
-            action: Action::MoveRight,
+            action: Action::Move(Direction::Right),
         },
         // Arrow key movement
         KeyBinding {
             modifiers: MOD | ModMask::CONTROL,
             key: LEFT,
-            action: Action::MoveLeft,
+            action: Action::Move(Direction::Left),
         },
         KeyBinding {
             modifiers: MOD | ModMask::CONTROL,
             key: DOWN,
-            action: Action::MoveDown,
+            action: Action::Move(Direction::Down),
         },
         KeyBinding {
             modifiers: MOD | ModMask::CONTROL,
             key: UP,
-            action: Action::MoveUp,
+            action: Action::Move(Direction::Up),
         },
         KeyBinding {
             modifiers: MOD | ModMask::CONTROL,
             key: RIGHT,
-            action: Action::MoveRight,
+            action: Action::Move(Direction::Right),
         },
         // =========================
         // Window resizing
@@ -275,23 +275,23 @@ pub fn bindings() -> Vec<KeyBinding> {
         KeyBinding {
             modifiers: MOD,
             key: H,
-            action: Action::FocusLeft,
+            action: Action::Focus(Direction::Left),
         },
         KeyBinding {
             modifiers: MOD,
             key: L,
-            action: Action::FocusRight,
+            action: Action::Focus(Direction::Right),
         },
         // Arrow key movement
         KeyBinding {
             modifiers: MOD,
             key: LEFT,
-            action: Action::FocusLeft,
+            action: Action::Focus(Direction::Left),
         },
         KeyBinding {
             modifiers: MOD,
             key: RIGHT,
-            action: Action::FocusRight,
+            action: Action::Focus(Direction::Right),
         },
         // =========================
         // Volume controls

@@ -10,7 +10,7 @@ use crate::{
         FullscreenState, Workspace, focus_next, focus_prev, fullscreen, is_floating,
         move_to_workspace, move_window, resize_window, switch_workspace, toggle_floating,
     },
-    actions::Action,
+    actions::{Action, Direction},
 };
 
 /// Check if the event modifiers match the binding modifiers.
@@ -46,35 +46,17 @@ pub fn handle_key_press<C: Connection>(
                     }
                 }
 
-                Action::MoveLeft => {
+                Action::Move(dir) => {
                     if let Some(window) = *focused {
                         if is_floating(&workspaces[*current], window) {
                             let geom = conn.get_geometry(window)?.reply()?;
-                            move_window(conn, window, geom.x as i32 - 20, geom.y as i32)?;
-                        }
-                    }
-                }
-                Action::MoveDown => {
-                    if let Some(window) = *focused {
-                        if is_floating(&workspaces[*current], window) {
-                            let geom = conn.get_geometry(window)?.reply()?;
-                            move_window(conn, window, geom.x as i32, geom.y as i32 + 20)?;
-                        }
-                    }
-                }
-                Action::MoveUp => {
-                    if let Some(window) = *focused {
-                        if is_floating(&workspaces[*current], window) {
-                            let geom = conn.get_geometry(window)?.reply()?;
-                            move_window(conn, window, geom.x as i32, geom.y as i32 - 20)?;
-                        }
-                    }
-                }
-                Action::MoveRight => {
-                    if let Some(window) = *focused {
-                        if is_floating(&workspaces[*current], window) {
-                            let geom = conn.get_geometry(window)?.reply()?;
-                            move_window(conn, window, geom.x as i32 + 20, geom.y as i32)?;
+                            let (dx, dy) = match dir {
+                                Direction::Left  => (-20, 0),
+                                Direction::Right => (20, 0),
+                                Direction::Up    => (0, -20),
+                                Direction::Down  => (0, 20),
+                            };
+                            move_window(conn, window, geom.x as i32 + dx, geom.y as i32 + dy)?;
                         }
                     }
                 }
@@ -117,9 +99,14 @@ pub fn handle_key_press<C: Connection>(
                         move_to_workspace(conn, workspaces, *current, (ws - 1) as usize, window, screen, *show_bar)?;
                     }
                 }
-                Action::FocusLeft => focus_prev(conn, &workspaces[*current], focused)?,
 
-                Action::FocusRight => focus_next(conn, &workspaces[*current], focused)?,
+                Action::Focus(dir) => {
+                    match dir {
+                        Direction::Left  => focus_prev(conn, &workspaces[*current], focused)?,
+                        Direction::Right => focus_next(conn, &workspaces[*current], focused)?,
+                        _ => {}
+                    }
+                }
 
                 Action::ToggleBar => {
                     *show_bar = !*show_bar;

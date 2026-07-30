@@ -1,14 +1,19 @@
 #[derive(Clone, Copy)]
+pub enum Direction {
+    Left,
+    Down,
+    Up,
+    Right,
+}
+
+#[derive(Clone, Copy)]
 pub enum Action {
     Exit,
     Close,
     ToggleBar,
     ToggleFloating,
 
-    MoveLeft,
-    MoveDown,
-    MoveUp,
-    MoveRight,
+    Move(Direction),
 
     IncreaseWidth,
     DecreaseWidth,
@@ -20,8 +25,7 @@ pub enum Action {
     Workspace(u8),
     MoveToWorkspace(u8),
 
-    FocusLeft,
-    FocusRight,
+    Focus(Direction),
 
     VolumeUp,
     VolumeDown,
