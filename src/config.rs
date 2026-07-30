@@ -56,14 +56,17 @@ pub const MOVE_STEP: i32 = 20;
 /// Step size for resizing floating windows (pixels per key press).
 pub const RESIZE_STEP: u16 = 20;
 
-/// Increase volume by 5%
+/// Increase volume by 5% command
 pub const VOLUME_UP_CMD: &str = "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+";
 
-/// Decrease volume by 5%
+/// Decrease volume by 5% command
 pub const VOLUME_DOWN_CMD: &str = "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-";
 
-/// Mute volume
+/// Mute volume command
 pub const VOLUME_MUTE_CMD: &str = "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle";
+
+/// Percentage of screen width for the master column (0–100). Default is 60%.
+pub const MASTER_RATIO: u32 = 60;
 
 /// Returns all configured keyboard shortcuts.
 ///

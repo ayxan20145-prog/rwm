@@ -1,6 +1,6 @@
 use x11rb::connection::Connection;
 use x11rb::protocol::xproto::*;
-use crate::config::BAR_HEIGHT;
+use crate::config::{BAR_HEIGHT, MASTER_RATIO};
 
 use crate::workspace::Workspace;
 
@@ -30,7 +30,7 @@ pub fn tile<C: Connection>(
 
     let width = screen.width_in_pixels as u32;
     let height = screen.height_in_pixels as u32;
-    let master_width = width * 60 / 100;
+    let master_width = width * MASTER_RATIO / 100;
 
     if tiled.len() == 1 {
         conn.configure_window(
