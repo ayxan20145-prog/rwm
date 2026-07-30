@@ -39,10 +39,10 @@ pub struct KeyBinding {
 pub const MOD: ModMask = ModMask::M4;
 
 /// Default terminal emulator.
-pub const TERM: &str = "kitty";
+pub const TERM_CMD: &str = "kitty";
 
 /// Default application launcher.
-pub const LAUNCHER: &str = "rmenu";
+pub const LAUNCHER_CMD: &str = "rmenu";
 
 /// Controls whether the status bar is enabled.
 pub const BAR: bool = true;
@@ -55,6 +55,15 @@ pub const MOVE_STEP: i32 = 20;
 
 /// Step size for resizing floating windows (pixels per key press).
 pub const RESIZE_STEP: u16 = 20;
+
+/// Increase volume by 5%
+pub const VOLUME_UP_CMD: &str = "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+";
+
+/// Decrease volume by 5%
+pub const VOLUME_DOWN_CMD: &str = "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-";
+
+/// Mute volume
+pub const VOLUME_MUTE_CMD: &str = "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle";
 
 /// Returns all configured keyboard shortcuts.
 ///
@@ -329,13 +338,13 @@ pub fn bindings() -> Vec<KeyBinding> {
         KeyBinding {
             modifiers: MOD,
             key: ENTER,
-            action: Action::Run(TERM),
+            action: Action::Run(TERM_CMD),
         },
         // Open application launcher
         KeyBinding {
             modifiers: MOD,
             key: D,
-            action: Action::Run(LAUNCHER),
+            action: Action::Run(LAUNCHER_CMD),
         },
     ]
 }

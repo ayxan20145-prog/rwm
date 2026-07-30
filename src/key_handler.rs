@@ -4,7 +4,7 @@ use x11rb::protocol::xproto::*;
 
 use crate::{
     bar,
-    config::KeyBinding,
+    config::{KeyBinding, VOLUME_DOWN_CMD, VOLUME_UP_CMD, VOLUME_MUTE_CMD},
     layout,
     workspace::{
         FullscreenState, Workspace, focus_next, focus_prev, fullscreen, is_floating,
@@ -109,19 +109,13 @@ pub fn handle_key_press<C: Connection>(
                 }
 
                 Action::VolumeDown => {
-                    Command::new("wpctl")
-                        .args(["set-volume", "@DEFAULT_AUDIO_SINK@", "5%-"])
-                        .spawn()?;
+                    Command::new("sh").arg("-c").arg(VOLUME_DOWN_CMD).spawn()?;
                 }
                 Action::VolumeUp => {
-                    Command::new("wpctl")
-                        .args(["set-volume", "@DEFAULT_AUDIO_SINK@", "5%+"])
-                        .spawn()?;
+                    Command::new("sh").arg("-c").arg(VOLUME_UP_CMD).spawn()?;
                 }
                 Action::Mute => {
-                    Command::new("wpctl")
-                        .args(["set-mute", "@DEFAULT_AUDIO_SINK@", "toggle"])
-                        .spawn()?;
+                    Command::new("sh").arg("-c").arg(VOLUME_MUTE_CMD).spawn()?;
                 }
 
                 Action::ToggleFloating => {
