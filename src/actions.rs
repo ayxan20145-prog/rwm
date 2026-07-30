@@ -13,7 +13,7 @@ pub enum Action {
     ToggleBar,
     ToggleFloating,
 
-    Move(Direction),
+    Move(Direction, i32),
 
     Resize(Direction, u16),
 

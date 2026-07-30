@@ -50,6 +50,12 @@ pub const BAR: bool = true;
 /// Height of the bar
 pub const BAR_HEIGHT: u32 = if BAR { 25 } else { 0 };
 
+/// Step size for moving floating windows (pixels per key press).
+pub const MOVE_STEP: i32 = 20;
+
+/// Step size for resizing floating windows (pixels per key press).
+pub const RESIZE_STEP: u16 = 20;
+
 /// Returns all configured keyboard shortcuts.
 ///
 /// This function defines every key combination supported by rwm,
@@ -101,43 +107,43 @@ pub fn bindings() -> Vec<KeyBinding> {
         KeyBinding {
             modifiers: MOD | ModMask::CONTROL,
             key: H,
-            action: Action::Move(Direction::Left),
+            action: Action::Move(Direction::Left, MOVE_STEP),
         },
         KeyBinding {
             modifiers: MOD | ModMask::CONTROL,
             key: J,
-            action: Action::Move(Direction::Down),
+            action: Action::Move(Direction::Down, MOVE_STEP),
         },
         KeyBinding {
             modifiers: MOD | ModMask::CONTROL,
             key: K,
-            action: Action::Move(Direction::Up),
+            action: Action::Move(Direction::Up, MOVE_STEP),
         },
         KeyBinding {
             modifiers: MOD | ModMask::CONTROL,
             key: L,
-            action: Action::Move(Direction::Right),
+            action: Action::Move(Direction::Right, MOVE_STEP),
         },
         // Arrow key movement
         KeyBinding {
             modifiers: MOD | ModMask::CONTROL,
             key: LEFT,
-            action: Action::Move(Direction::Left),
+            action: Action::Move(Direction::Left, MOVE_STEP),
         },
         KeyBinding {
             modifiers: MOD | ModMask::CONTROL,
             key: DOWN,
-            action: Action::Move(Direction::Down),
+            action: Action::Move(Direction::Down, MOVE_STEP),
         },
         KeyBinding {
             modifiers: MOD | ModMask::CONTROL,
             key: UP,
-            action: Action::Move(Direction::Up),
+            action: Action::Move(Direction::Up, MOVE_STEP),
         },
         KeyBinding {
             modifiers: MOD | ModMask::CONTROL,
             key: RIGHT,
-            action: Action::Move(Direction::Right),
+            action: Action::Move(Direction::Right, MOVE_STEP),
         },
         // =========================
         // Window resizing
@@ -147,23 +153,23 @@ pub fn bindings() -> Vec<KeyBinding> {
         KeyBinding {
             modifiers: MOD,
             key: EQUAL,
-            action: Action::Resize(Direction::Right, 20),
+            action: Action::Resize(Direction::Right, RESIZE_STEP),
         },
         KeyBinding {
             modifiers: MOD,
             key: MINUS,
-            action: Action::Resize(Direction::Left, 20),
+            action: Action::Resize(Direction::Left, RESIZE_STEP),
         },
         // Change window height
         KeyBinding {
             modifiers: MOD | ModMask::SHIFT,
             key: EQUAL,
-            action: Action::Resize(Direction::Down, 20),
+            action: Action::Resize(Direction::Down, RESIZE_STEP),
         },
         KeyBinding {
             modifiers: MOD | ModMask::SHIFT,
             key: MINUS,
-            action: Action::Resize(Direction::Up, 20),
+            action: Action::Resize(Direction::Up, RESIZE_STEP),
         },
         // Toggle full screen mode
         KeyBinding {

@@ -46,15 +46,15 @@ pub fn handle_key_press<C: Connection>(
                     }
                 }
 
-                Action::Move(dir) => {
+                Action::Move(dir, amount) => {
                     if let Some(window) = *focused {
                         if is_floating(&workspaces[*current], window) {
                             let geom = conn.get_geometry(window)?.reply()?;
                             let (dx, dy) = match dir {
-                                Direction::Left  => (-20, 0),
-                                Direction::Right => (20, 0),
-                                Direction::Up    => (0, -20),
-                                Direction::Down  => (0, 20),
+                                Direction::Left  => (-amount, 0),
+                                Direction::Right => (amount, 0),
+                                Direction::Up    => (0, -amount),
+                                Direction::Down  => (0, amount),
                             };
                             move_window(conn, window, geom.x as i32 + dx, geom.y as i32 + dy)?;
                         }
