@@ -137,7 +137,7 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
             _ => {}
         }
 
-        let active_window = focused.unwrap_or(1);
+        let active_window = focused.unwrap_or(0);
         ewmh::set_active_window(&conn, screen.root, &atoms, active_window)?;
 
         if show_bar {
