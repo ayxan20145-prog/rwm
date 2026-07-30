@@ -6,9 +6,7 @@ use crate::{
     ewmh,
 };
 use x11rb::{
-    connect,
-    connection::Connection,
-    protocol::{Event, xproto::*},
+    CURRENT_TIME, connect, connection::Connection, protocol::{Event, xproto::*}
 };
 
 /// Starts the window manager.
@@ -94,6 +92,8 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
                 focused = Some(e.window);
 
                 conn.map_window(e.window)?;
+
+                conn.grab_button(false, e.window, EventMask::BUTTON_PRESS, GrabMode::ASYNC, GrabMode::ASYNC, screen.root, x11rb::NONE, ButtonIndex::M1, ModMask::default())?;
                 layout::tile(&conn, &workspaces[current], screen, show_bar)?;
                 conn.set_input_focus(InputFocus::POINTER_ROOT, e.window, x11rb::CURRENT_TIME)?;
                 conn.flush()?;
@@ -132,6 +132,17 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
                     &bar,
                     &mut show_bar,
                 )?;
+            }
+            Event::ButtonPress(e) => {
+                let window = e.event;
+                if window == bar.window {
+                    return Ok(())
+                }
+                if workspaces[current].windows.iter().any(|c| c.window == window) {
+                    focused = Some(window);
+                    conn.set_input_focus(InputFocus::POINTER_ROOT, window, CURRENT_TIME)?;
+                    conn.flush()?;
+                }
             }
 
             _ => {}
