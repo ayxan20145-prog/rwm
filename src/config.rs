@@ -147,23 +147,23 @@ pub fn bindings() -> Vec<KeyBinding> {
         KeyBinding {
             modifiers: MOD,
             key: EQUAL,
-            action: Action::IncreaseWidth,
+            action: Action::Resize(Direction::Right, 20),
         },
         KeyBinding {
             modifiers: MOD,
             key: MINUS,
-            action: Action::DecreaseWidth,
+            action: Action::Resize(Direction::Left, 20),
         },
         // Change window height
         KeyBinding {
             modifiers: MOD | ModMask::SHIFT,
             key: EQUAL,
-            action: Action::IncreaseHeight,
+            action: Action::Resize(Direction::Down, 20),
         },
         KeyBinding {
             modifiers: MOD | ModMask::SHIFT,
             key: MINUS,
-            action: Action::DecreaseHeight,
+            action: Action::Resize(Direction::Up, 20),
         },
         // Toggle full screen mode
         KeyBinding {

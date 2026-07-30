@@ -15,10 +15,7 @@ pub enum Action {
 
     Move(Direction),
 
-    IncreaseWidth,
-    DecreaseWidth,
-    IncreaseHeight,
-    DecreaseHeight,
+    Resize(Direction, u16),
 
     Fullscreen,
 

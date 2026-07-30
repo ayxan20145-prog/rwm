@@ -61,28 +61,18 @@ pub fn handle_key_press<C: Connection>(
                     }
                 }
 
-                Action::IncreaseWidth => {
-                    if let Some(window) = *focused {
-                        let geom = conn.get_geometry(window)?.reply()?;
-                        resize_window(conn, window, geom.width as u32 + 20, geom.height as u32)?;
-                    }
-                }
-                Action::DecreaseWidth => {
-                    if let Some(window) = *focused {
-                        let geom = conn.get_geometry(window)?.reply()?;
-                        resize_window(conn, window, geom.width as u32 - 20, geom.height as u32)?;
-                    }
-                }
-                Action::IncreaseHeight => {
-                    if let Some(window) = *focused {
-                        let geom = conn.get_geometry(window)?.reply()?;
-                        resize_window(conn, window, geom.width as u32, geom.height as u32 + 20)?;
-                    }
-                }
-                Action::DecreaseHeight => {
-                    if let Some(window) = *focused {
-                        let geom = conn.get_geometry(window)?.reply()?;
-                        resize_window(conn, window, geom.width as u32, geom.height as u32 - 20)?;
+                Action::Resize(dir, amount) => {
+                    if let Some(window)  = *focused {
+                        if is_floating(&workspaces[*current], window) {
+                            let geom = conn.get_geometry(window)?.reply()?;
+                            let (new_w, new_h) = match dir {
+                                Direction::Left => (geom.width.saturating_sub(amount), geom.height),
+                                Direction::Right => (geom.width.saturating_add(amount), geom.height),
+                                Direction::Down => (geom.width, geom.height.saturating_add(amount)),
+                                Direction::Up => (geom.width, geom.height.saturating_sub(amount)),
+                            };
+                            resize_window(conn, window, new_w as u32, new_h as u32)?;
+                        }
                     }
                 }
 
