@@ -47,34 +47,32 @@ pub fn handle_key_press<C: Connection>(
                 }
 
                 Action::Move(dir, amount) => {
-                    if let Some(window) = *focused {
-                        if is_floating(&workspaces[*current], window) {
-                            let geom = conn.get_geometry(window)?.reply()?;
-                            let (dx, dy) = match dir {
-                                Direction::Left => (-amount, 0),
-                                Direction::Right => (amount, 0),
-                                Direction::Up => (0, -amount),
-                                Direction::Down => (0, amount),
-                            };
-                            move_window(conn, window, geom.x as i32 + dx, geom.y as i32 + dy)?;
-                        }
+                    if let Some(window) = *focused
+                        && is_floating(&workspaces[*current], window)
+                    {
+                        let geom = conn.get_geometry(window)?.reply()?;
+                        let (dx, dy) = match dir {
+                            Direction::Left => (-amount, 0),
+                            Direction::Right => (amount, 0),
+                            Direction::Up => (0, -amount),
+                            Direction::Down => (0, amount),
+                        };
+                        move_window(conn, window, geom.x as i32 + dx, geom.y as i32 + dy)?;
                     }
                 }
 
                 Action::Resize(dir, amount) => {
-                    if let Some(window) = *focused {
-                        if is_floating(&workspaces[*current], window) {
-                            let geom = conn.get_geometry(window)?.reply()?;
-                            let (new_w, new_h) = match dir {
-                                Direction::Left => (geom.width.saturating_sub(amount), geom.height),
-                                Direction::Right => {
-                                    (geom.width.saturating_add(amount), geom.height)
-                                }
-                                Direction::Down => (geom.width, geom.height.saturating_add(amount)),
-                                Direction::Up => (geom.width, geom.height.saturating_sub(amount)),
-                            };
-                            resize_window(conn, window, new_w as u32, new_h as u32)?;
-                        }
+                    if let Some(window) = *focused
+                        && is_floating(&workspaces[*current], window)
+                    {
+                        let geom = conn.get_geometry(window)?.reply()?;
+                        let (new_w, new_h) = match dir {
+                            Direction::Left => (geom.width.saturating_sub(amount), geom.height),
+                            Direction::Right => (geom.width.saturating_add(amount), geom.height),
+                            Direction::Down => (geom.width, geom.height.saturating_add(amount)),
+                            Direction::Up => (geom.width, geom.height.saturating_sub(amount)),
+                        };
+                        resize_window(conn, window, new_w as u32, new_h as u32)?;
                     }
                 }
 

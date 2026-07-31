@@ -23,7 +23,6 @@ use x11rb::protocol::xproto::ModMask;
 /// - Modifier keys (Super, Alt, Ctrl, Shift, etc.)
 /// - An X11 keycode
 /// - An action enum interpreted by the key handler
-
 pub struct KeyBinding {
     /// Modifier keys required for this shortcut.
     ///
