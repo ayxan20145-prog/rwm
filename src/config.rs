@@ -11,8 +11,11 @@
 //! Keybindings are stored as [`KeyBinding`] structs and loaded by the
 //! window manager during startup.
 
+use crate::{
+    actions::{Action, Direction},
+    keys::*,
+};
 use x11rb::protocol::xproto::ModMask;
-use crate::{keys::*, actions::{Action, Direction}};
 
 /// Represents a keyboard shortcut handled by the window manager.
 ///
@@ -300,6 +303,16 @@ pub fn bindings() -> Vec<KeyBinding> {
             key: L,
             action: Action::Focus(Direction::Right),
         },
+        KeyBinding {
+            modifiers: MOD,
+            key: K,
+            action: Action::Focus(Direction::Up),
+        },
+        KeyBinding {
+            modifiers: MOD,
+            key: J,
+            action: Action::Focus(Direction::Down),
+        },
         // Arrow key movement
         KeyBinding {
             modifiers: MOD,
@@ -310,6 +323,16 @@ pub fn bindings() -> Vec<KeyBinding> {
             modifiers: MOD,
             key: RIGHT,
             action: Action::Focus(Direction::Right),
+        },
+        KeyBinding {
+            modifiers: MOD,
+            key: UP,
+            action: Action::Focus(Direction::Up),
+        },
+        KeyBinding {
+            modifiers: MOD,
+            key: DOWN,
+            action: Action::Focus(Direction::Down),
         },
         // =========================
         // Volume controls
