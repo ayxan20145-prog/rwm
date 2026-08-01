@@ -1,6 +1,6 @@
+use crate::config::{BAR_HEIGHT, MASTER_RATIO};
 use x11rb::connection::Connection;
 use x11rb::protocol::xproto::*;
-use crate::config::{BAR_HEIGHT, MASTER_RATIO};
 
 use crate::workspace::Workspace;
 
@@ -22,11 +22,7 @@ pub fn tile<C: Connection>(
         return Ok(());
     }
 
-    let bar_height = if show_bar {
-        BAR_HEIGHT
-    } else {
-        0
-    };
+    let bar_height = if show_bar { BAR_HEIGHT } else { 0 };
 
     let width = screen.width_in_pixels as u32;
     let height = screen.height_in_pixels as u32;

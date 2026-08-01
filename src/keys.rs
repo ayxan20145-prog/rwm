@@ -5,7 +5,6 @@
 
 #![allow(unused)]
 
-
 // =====================
 // Numbers
 // =====================
@@ -20,7 +19,6 @@ pub const KEY_7: u8 = 16;
 pub const KEY_8: u8 = 17;
 pub const KEY_9: u8 = 18;
 pub const KEY_0: u8 = 19;
-
 
 // =====================
 // Letters
@@ -55,7 +53,6 @@ pub const B: u8 = 56;
 pub const N: u8 = 57;
 pub const M: u8 = 58;
 
-
 // =====================
 // Symbols
 // =====================
@@ -76,7 +73,6 @@ pub const SLASH: u8 = 61;
 
 pub const BACKSLASH: u8 = 51;
 
-
 // =====================
 // Control keys
 // =====================
@@ -88,7 +84,6 @@ pub const CAPS_LOCK: u8 = 66;
 pub const ENTER: u8 = 36;
 pub const SPACE: u8 = 65;
 pub const BACKSPACE: u8 = 22;
-
 
 // =====================
 // Modifiers
@@ -105,7 +100,6 @@ pub const RIGHT_ALT: u8 = 108;
 
 pub const LEFT_SUPER: u8 = 133;
 pub const RIGHT_SUPER: u8 = 134;
-
 
 // =====================
 // Function keys
@@ -124,7 +118,6 @@ pub const F10: u8 = 76;
 pub const F11: u8 = 95;
 pub const F12: u8 = 96;
 
-
 // =====================
 // Navigation
 // =====================
@@ -138,7 +131,6 @@ pub const DELETE: u8 = 119;
 pub const PAGE_UP: u8 = 112;
 pub const PAGE_DOWN: u8 = 117;
 
-
 // =====================
 // Arrow keys
 // =====================
@@ -147,7 +139,6 @@ pub const LEFT: u8 = 113;
 pub const DOWN: u8 = 116;
 pub const UP: u8 = 111;
 pub const RIGHT: u8 = 114;
-
 
 // =====================
 // Numpad
@@ -172,7 +163,6 @@ pub const KP_7: u8 = 79;
 pub const KP_8: u8 = 80;
 pub const KP_9: u8 = 81;
 
-
 // =====================
 // Media keys
 // =====================
@@ -185,7 +175,6 @@ pub const PLAY_PAUSE: u8 = 172;
 pub const STOP: u8 = 174;
 pub const NEXT: u8 = 171;
 pub const PREVIOUS: u8 = 173;
-
 
 // =====================
 // System keys

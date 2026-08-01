@@ -26,15 +26,15 @@
 //! - [`actions`] - Window manager actions.
 //! - [`ewmh`] - EWMH support.
 
+mod actions;
 mod bar;
 mod config;
+mod ewmh;
 mod key_handler;
+mod keys;
 mod layout;
 mod rwm;
 mod workspace;
-mod keys;
-mod actions;
-mod ewmh;
 
 /// Program entry point.
 fn main() -> Result<(), Box<dyn std::error::Error>> {

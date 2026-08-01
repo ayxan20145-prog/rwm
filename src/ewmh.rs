@@ -3,9 +3,9 @@
 //! This module sets the required properties so that external tools
 //! (like pagers, panels, `xprop`) can identify your window manager.
 
+use x11rb::COPY_FROM_PARENT;
 use x11rb::connection::Connection;
 use x11rb::protocol::xproto::*;
-use x11rb::COPY_FROM_PARENT;
 
 /// Holds all EWMH atom identifiers we use.
 pub struct EwmhAtoms {
@@ -17,13 +17,17 @@ pub struct EwmhAtoms {
 }
 
 /// Initialise all needed atoms.
-pub fn intern_atoms<C: Connection>(
-    conn: &C,
-) -> Result<EwmhAtoms, Box<dyn std::error::Error>> {
+pub fn intern_atoms<C: Connection>(conn: &C) -> Result<EwmhAtoms, Box<dyn std::error::Error>> {
     let wm_name = conn.intern_atom(false, b"_NET_WM_NAME")?.reply()?.atom;
-    let check = conn.intern_atom(false, b"_NET_SUPPORTING_WM_CHECK")?.reply()?.atom;
+    let check = conn
+        .intern_atom(false, b"_NET_SUPPORTING_WM_CHECK")?
+        .reply()?
+        .atom;
     let supported = conn.intern_atom(false, b"_NET_SUPPORTED")?.reply()?.atom;
-    let active_window = conn.intern_atom(false, b"_NET_ACTIVE_WINDOW")?.reply()?.atom;
+    let active_window = conn
+        .intern_atom(false, b"_NET_ACTIVE_WINDOW")?
+        .reply()?
+        .atom;
     let utf8_string = conn.intern_atom(false, b"UTF8_STRING")?.reply()?.atom;
 
     Ok(EwmhAtoms {
@@ -50,7 +54,11 @@ pub fn setup_ewmh<C: Connection>(
         COPY_FROM_PARENT as u8,
         check_window,
         screen.root,
-        0, 0, 1, 1, 0,
+        0,
+        0,
+        1,
+        1,
+        0,
         WindowClass::INPUT_ONLY,
         0,
         &CreateWindowAux::new(),

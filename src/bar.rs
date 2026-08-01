@@ -1,5 +1,5 @@
-use x11rb::{COPY_FROM_PARENT, connection::Connection, protocol::xproto::*};
 use crate::config::BAR_HEIGHT;
+use x11rb::{COPY_FROM_PARENT, connection::Connection, protocol::xproto::*};
 
 /// Represents the status bar window and its graphics context.
 pub struct Bar {
