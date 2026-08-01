@@ -78,7 +78,40 @@ pub fn handle_key_press<C: Connection>(
 
                 Action::Fullscreen => {
                     if let Some(window) = *focused {
-                        fullscreen(conn, fullscreen_states, window, screen)?;
+                        let is_fullscreen = fullscreen_states
+                            .iter()
+                            .any(|s| s.window == window && s.fullscreen);
+
+                        if is_fullscreen {
+                            let was_tiled = fullscreen_states
+                                .iter()
+                                .find(|s| s.window == window)
+                                .map(|s| s.was_tiled)
+                                .unwrap_or(false);
+
+                            fullscreen(conn, fullscreen_states, window, screen, false)?;
+
+                            if was_tiled {
+                                if let Some(client) = workspaces[*current]
+                                    .windows
+                                    .iter_mut()
+                                    .find(|c| c.window == window)
+                                {
+                                    client.floating = false;
+                                }
+                                layout::tile(conn, &workspaces[*current], screen, *show_bar)?;
+                            }
+                        } else {
+                            let floating = is_floating(&workspaces[*current], window);
+                            let was_tiled = !floating;
+
+                            if !floating {
+                                toggle_floating(&mut workspaces[*current], window);
+                                layout::tile(conn, &workspaces[*current], screen, *show_bar)?;
+                            }
+
+                            fullscreen(conn, fullscreen_states, window, screen, was_tiled)?;
+                        }
                     }
                 }
 

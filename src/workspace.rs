@@ -17,6 +17,7 @@ pub struct FullscreenState {
     pub width: u32,
     pub height: u32,
     pub fullscreen: bool,
+    pub was_tiled: bool,
 }
 
 /// Switch to another workspace.
@@ -165,6 +166,7 @@ pub fn fullscreen<C: Connection>(
     states: &mut Vec<FullscreenState>,
     window: Window,
     screen: &Screen,
+    was_tiled: bool,
 ) -> Result<(), Box<dyn std::error::Error>> {
     if let Some(state) = states.iter_mut().find(|s| s.window == window) {
         if state.fullscreen {
@@ -197,6 +199,7 @@ pub fn fullscreen<C: Connection>(
             width: geom.width.into(),
             height: geom.height.into(),
             fullscreen: true,
+            was_tiled,
         });
         conn.configure_window(
             window,
